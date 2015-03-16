@@ -1,0 +1,1 @@
+OANDA_DOMAIN = 'stream-fxpractice.oanda.com'

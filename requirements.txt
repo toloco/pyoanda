@@ -1,0 +1,8 @@
+requests
+numpy
+nose
+pandas
+ipython
+ipdb
+pyyaml
+pytest-sugar
