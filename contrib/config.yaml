@@ -1,6 +1,0 @@
-access:
-    access_token: '2c079183e6aca790230f5f307cccbd1c-1171d24454f66fee866d37d27fae4efa'
-    account_id: '7741575'
-domains:
-    api: 'https://api-fxpractice.oanda.com'
-    stream: 'https://stream-fxpractice.oanda.com/'
