@@ -9,8 +9,9 @@ log = getLogger(__name__)
 class Client(object):
     VERSION = "v1"
     
-    def __init__(self, domain, account_id, access_token):
+    def __init__(self, domain, domain_stream, account_id, access_token):
         self.domain = domain
+        self.domain_stream = domain_stream
         self.access_token = access_token
         self.account_id = account_id
         self.my_account = self._Client__get_credentials()
@@ -80,7 +81,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getCurrentPrices
         """
-        url = "{0}/{1}/prices".format(self.domain, self.VERSION)
+        url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
         params = {"accountId" : self.account_id, "instruments": instruments}
         try:
             if stream:

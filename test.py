@@ -7,16 +7,20 @@ if __name__ == "__main__":
         config = yaml.load(f.read())
     c = Client(
         domain=config["domains"]["api"], 
+        domain_stream=config["domains"]["stream"], 
         account_id=config["access"]["account_id"],
         access_token=config["access"]["access_token"]
     )
-    print(c.get_instruments())
-    print(c.get_prices("EUR_GBP", stream=False))
+    # print(c.get_instruments())
+    # print(c.get_prices("EUR_GBP", stream=False))
 
 
     for line in c.get_prices("EUR_GBP", stream=True).iter_lines(1):
         if line:
-                print(line.decode("utf-8"))
+            data = line.decode("utf-8")
+            print(data)
+            
+
                 # print(json.loads(line.decode("utf-8")))
                 # if 'instrument' in msg or 'tick' in msg:
                 #     print(line)
