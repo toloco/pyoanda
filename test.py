@@ -11,16 +11,11 @@ if __name__ == "__main__":
         account_id=config["access"]["account_id"],
         access_token=config["access"]["access_token"]
     )
-    # print(c.get_instruments())
-    # print(c.get_prices("EUR_GBP", stream=False))
 
-
+    print(c.get_instruments())
+    print(c.get_prices("EUR_GBP", stream=False))
+    print(c.get_instrument_history(instrument="EUR_GBP", candle_format="midpoint", granularity="S30"))
     for line in c.get_prices("EUR_GBP", stream=True).iter_lines(1):
         if line:
-            data = line.decode("utf-8")
-            print(data)
-            
+            print(line.decode("utf-8"))
 
-                # print(json.loads(line.decode("utf-8")))
-                # if 'instrument' in msg or 'tick' in msg:
-                #     print(line)

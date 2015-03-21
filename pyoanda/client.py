@@ -37,14 +37,14 @@ class Client(object):
             self.session = requests.Session()
             self.session.headers.update({'Authorization' : 'Bearer {}'.format(self.access_token)})
         try:
-            response = getattr(self.session, method)(uri, params=params, verify=True, stream = False)
-            assert response.status_code == 200
+            resp = getattr(self.session, method)(uri, params=params, verify=True, stream = False)
+            assert resp.status_code == 200
         except AssertionError:
             raise BadRequest()
         except Exception as e:
             log.error("Bad response: {}".format(e), exc_info=True)
         else:
-            return response.json()
+            return resp.json()
 
     def __call_stream(self, uri, params = None, method="get"):
         """Returns an stream response
@@ -53,14 +53,14 @@ class Client(object):
             self.session = requests.Session()
             self.session.headers.update({'Authorization' : 'Bearer {}'.format(self.access_token)})
         try:
-            response = getattr(self.session, method)(uri, params=params, verify=False, stream = True)
-            assert response.status_code == 200
+            resp = getattr(self.session, method)(uri, params=params, verify=True, stream = True)
+            assert resp.status_code == 200
         except AssertionError:
             raise BadRequest()
         except Exception as e:
             log.error("Bad response: {}".format(e), exc_info=True)
         else:
-            return response
+            return resp
 
     def get_instruments(self):
         """
@@ -88,6 +88,33 @@ class Client(object):
                 return self._Client__call_stream(uri=url, params=params, method="get")
             else:
                 return self._Client__call(uri=url, params=params, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+    def get_instrument_history(self, instrument, candle_format, granularity, count=500,
+                               daily_alignment=None, alignment_timezone=None,
+                               weekly_alignment="Monday", start=None, end=None):
+        """
+            See more: http://developer.oanda.com/rest-live/rates/#retrieveInstrumentHistory
+        """
+        url = "{0}/{1}/candles".format(self.domain, self.VERSION)
+        params = {
+            "accountId" : self.account_id,
+            "instrument":instrument, 
+            "candleFormat":candle_format,
+            "granularity":granularity,
+            "count":count,
+            "dailyAlignment":daily_alignment,
+            "alignmentTimezone":alignment_timezone,
+            "weeklyAlignment":weekly_alignment,
+            "start":start,
+            "end":end,
+        }
+        params = {k: v for k, v in params.items() if v}
+        try:
+            return self._Client__call(uri=url, params=params, method="get")
         except RequestException:
             return False
         except AssertionError:
