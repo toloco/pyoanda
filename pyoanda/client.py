@@ -14,8 +14,7 @@ class Client(object):
         self.domain_stream = domain_stream
         self.access_token = access_token
         self.account_id = account_id
-        self.my_account = self._Client__get_credentials()
-        if not self.my_account:
+        if not self._Client__get_credentials():
             raise BadCredentials()
 
     def __get_credentials(self):
@@ -112,6 +111,25 @@ class Client(object):
             "start":start,
             "end":end,
         }
+        # Remove empty params
+        params = {k: v for k, v in params.items() if v}
+        try:
+            return self._Client__call(uri=url, params=params, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+    def get_account_orders(self, instrument=None, count=50):
+        """
+            See more: http://developer.oanda.com/rest-live/orders/#getOrdersForAnAccount
+        """
+        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+        params = {
+            "instrument":instrument, 
+            "count":count
+        }
+        # Remove empty params
         params = {k: v for k, v in params.items() if v}
         try:
             return self._Client__call(uri=url, params=params, method="get")
