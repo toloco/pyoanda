@@ -9,3 +9,6 @@ Python library that wraps [Oanda](oanda.com) API.
 ```shell
 py.test
 ```
+
+
+Pypi https://pypi.python.org/pypi/pyoanda/0.1.0
