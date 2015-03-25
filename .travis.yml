@@ -7,8 +7,8 @@ python:
     - "3.4"
     - "pypy"
 install:
-    - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then travis_retry pip install -r requeriments2.txt; fi
-    - travis_retry pip install -r requeriments.txt
+    - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then travis_retry pip install -r requirements2.txt; fi
+    - travis_retry pip install -r requirements.txt
     - travis_retry python setup.py install
 script:
     - python setup.py test
