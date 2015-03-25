@@ -149,17 +149,6 @@ class Client(object):
                      expiry=None, price=None, lowerBound=None, upperBound=None, stopLoss=0, takeProfit=0, trailingStop=0):
         """
             See more: http://developer.oanda.com/rest-live/orders/#createNewOrder
-
-        units: Required The number of units to open order for.
-        side: Required Direction of the order, either ‘buy’ or ‘sell’.
-        type: Required The type of the order ‘limit’, ‘stop’, ‘marketIfTouched’ or ‘market’.
-        expiry: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The order expiration time in UTC. The value specified must be in a valid datetime format.
-        price: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The price where the order is set to trigger at.
-        lowerBound: Optional The minimum execution price.
-        upperBound: Optional The maximum execution price.
-        stopLoss: Optional The stop loss price.
-        takeProfit: Optional The take profit price.
-        trailingStop: Optional The trailing stop distance in pips, up to one decimal place.
         """
         API_url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
 
