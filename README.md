@@ -3,7 +3,8 @@
 Python library that wraps [Oanda](http://oanda.com) API.
 
 
-Status: __ALPHA__
+Status: __ALPHA__ [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?branch=master)](https://travis-ci.org/toloco/pyoanda)
+
 
 
 ### Code example
