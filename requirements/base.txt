@@ -1,8 +1,6 @@
 ipdb
 ipython
-nose
-py
-pytest
-pytest-sugar
 requests
 enum34
+wheel
+setuptools
