@@ -1,13 +1,18 @@
 import requests
+import datetime
+
 from logging import getLogger
 from requests.exceptions import RequestException
+from enum import Enum
 
 from .exceptions import BadCredentials, BadRequest
 
 log = getLogger(__name__)
 
 class Client(object):
-    VERSION = "v1"
+    API_VERSION = "v1"
+    SIDES = ("buy", "sell")
+    ORDER_TYPE = ("limit", "stop", "marketIfTouched", "market")
     
     def __init__(self, domain, domain_stream, account_id, access_token):
         self.domain = domain
@@ -21,7 +26,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/accounts/
         """
-        url = "{0}/{1}/accounts/{2}".format(self.domain, self.VERSION, self.account_id)
+        API_url = "{0}/{1}/accounts/{2}".format(self.domain, self.VERSION, self.account_id)
         try:
             response = self._Client__call(uri=url)
             assert len(response) > 0
@@ -65,7 +70,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getInstrumentList
         """
-        url = "{0}/{1}/instruments".format(self.domain, self.VERSION)
+        API_url = "{0}/{1}/instruments".format(self.domain, self.VERSION)
         params = {"accountId" : self.account_id}
         try:
             response = self._Client__call(uri=url, params=params)
@@ -80,7 +85,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getCurrentPrices
         """
-        url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
+        API_url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
         params = {"accountId" : self.account_id, "instruments": instruments}
         try:
             if stream:
@@ -92,13 +97,15 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_instrument_history(self, instrument, candle_format, granularity, count=500,
-                               daily_alignment=None, alignment_timezone=None,
-                               weekly_alignment="Monday", start=None, end=None):
+    def get_instrument_history(self, instrument, candle_format, granularity,
+                               count=500, daily_alignment=None,
+                               alignment_timezone=None,
+                               weekly_alignment="Monday", start=None, end=None
+                              ):
         """
             See more: http://developer.oanda.com/rest-live/rates/#retrieveInstrumentHistory
         """
-        url = "{0}/{1}/candles".format(self.domain, self.VERSION)
+        API_url = "{0}/{1}/candles".format(self.domain, self.VERSION)
         params = {
             "accountId" : self.account_id,
             "instrument":instrument, 
@@ -124,7 +131,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/orders/#getOrdersForAnAccount
         """
-        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+        API_url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
         params = {
             "instrument":instrument, 
             "count":count
@@ -137,3 +144,64 @@ class Client(object):
             return False
         except AssertionError:
             return False
+
+    def create_order(self, instrument, units, side="buy", order_type="market",
+                     expiry=None, price=None, lowerBound=None, upperBound=None, stopLoss=0, takeProfit=0, trailingStop=0):
+        """
+            See more: http://developer.oanda.com/rest-live/orders/#createNewOrder
+
+        units: Required The number of units to open order for.
+        side: Required Direction of the order, either ‘buy’ or ‘sell’.
+        type: Required The type of the order ‘limit’, ‘stop’, ‘marketIfTouched’ or ‘market’.
+        expiry: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The order expiration time in UTC. The value specified must be in a valid datetime format.
+        price: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The price where the order is set to trigger at.
+        lowerBound: Optional The minimum execution price.
+        upperBound: Optional The maximum execution price.
+        stopLoss: Optional The stop loss price.
+        takeProfit: Optional The take profit price.
+        trailingStop: Optional The trailing stop distance in pips, up to one decimal place.
+        """
+        API_url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+
+        params = {
+            "instrument":instrument, 
+            "units": units,
+            "side": side,
+            "type": order_type,
+            "expiry": expiry,
+            "price": price,
+            "lowerBound": lowerBound,
+            "upperBound": upperBound,
+            "stopLoss": stopLoss,
+            "takeProfit": takeProfit,
+            "trailingStop": trailingStop
+        }
+
+        checker = {
+            "instrument": (str,),
+            "units": ((float, int),),
+            "side":(str, ("buy", "sell")),
+            "order_type":(str, ("limit", "stop", "marketIfTouched", "market")),
+            "expiry":((None, datetime),),
+            "price":((None, float, int),),
+            "lowerBound":((None, float, int),),
+            "upperBound":((None, float, int),),
+            "stopLoss":((None, int),),
+            "takeProfit":((None, int),),
+            "trailingStop":((None, int),)
+        } 
+        # Remove empty params
+        params = {k: v for k, v in params.items() if v}
+        try:
+            return self._Client__call(uri=url, params=params, method="post")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+
+
+
+
+
+

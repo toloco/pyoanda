@@ -32,4 +32,5 @@ py.test pyoanda
 ```
 
 
-[Pypi Page](https://pypi.python.org/pypi/pyoanda/0.1.0)
+See [Pypi](https://pypi.python.org/pypi/pyoanda/0.1.0) project page.
+
