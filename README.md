@@ -1,4 +1,4 @@
-# PYOANDA 
+# PYOANDA
 
 Python library that wraps [Oanda](http://oanda.com) API.
 
@@ -13,8 +13,8 @@ Status: __ALPHA__ [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?bran
     from pyoanda.client import Client
 
     c = Client(
-        domain="https://api-fxpractice.oanda.com, 
-        domain_stream="https://stream-fxpractice.oanda.com", 
+        domain="https://api-fxpractice.oanda.com,
+        domain_stream="https://stream-fxpractice.oanda.com",
         account_id="Your Oanda account ID",
         access_token="Your Oanda access token"
     )
@@ -28,7 +28,7 @@ Status: __ALPHA__ [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?bran
 
 ### Run test
 ```shell
-py.test
+py.test pyoanda
 ```
 
 
