@@ -2,5 +2,7 @@ ipdb
 ipython
 requests
 enum34
-wheel
 setuptools
+twine
+wheel
+nose

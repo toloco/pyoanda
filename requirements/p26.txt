@@ -1,4 +1,0 @@
-ordereddict==1.1
-unittest2>=0.5.1
-nose
-mock>=1.0.1

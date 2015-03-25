@@ -12,23 +12,23 @@ with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
 
 PY3 = sys.version_info[0] == 3
 
-# -*- Installation Requires -*-
-def strip_comments(l):
-    return l.split('#', 1)[0].strip()
+# # -*- Installation Requires -*-
+# def strip_comments(l):
+#     return l.split('#', 1)[0].strip()
 
-def reqs(*f):
-    return [
-        r for r in (
-            strip_comments(l) for l in open(
-                os.path.join(os.getcwd(), 'requirements', *f)).readlines()
-        ) if r]
+# def reqs(*f):
+#     return [
+#         r for r in (
+#             strip_comments(l) for l in open(
+#                 os.path.join(os.getcwd(), 'requirements', *f)).readlines()
+#         ) if r]
 
-install_requires = reqs('base.txt')
-if not PY3:
-    install_requires += reqs('p26.txt')
+# install_requires = reqs('base.txt')
+# if not PY3:
+#     install_requires += reqs('p26.txt')
 
-# -*- Tests Requires -*-
-tests_require = reqs('test.txt')
+# # -*- Tests Requires -*-
+# tests_require = reqs('test.txt')
 
 setup(
     name='PyOanda',
@@ -36,7 +36,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.0',
+    version='0.1.0a1',
     description='PyOanda',
     long_description=long_description,
     url='https://github.com/toloco/pyoanda',
@@ -81,8 +81,8 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=install_requires,
-    tests_require=tests_require,
+    install_requires=['requests'],
+    tests_require=['nose'],
     test_suite='nose.collector',
 
 
