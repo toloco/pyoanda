@@ -11,13 +11,13 @@ except ImportError:
 from ..type_checker import type_checker
 
 class TypeCheckerTest(unittest.TestCase):
-    # def test_simple_pass(self):
-    #     item = {"x": 1, "y": None}
-    #     checker = {
-    #         "x": (int, range(1, 10)),
-    #         "y" : (None,)
-    #     }
-    #     type_checker(item, checker)
+    def test_simple_pass(self):
+        item = {"x": 1, "y": None}
+        checker = {
+            "x": (int, range(1, 10)),
+            "y" : (None,)
+        }
+        type_checker(item, checker)
 
     def test_simple_fail_type(self):
         item = {"x": "X"}

@@ -10,6 +10,7 @@ Python library that wraps [Oanda](http://oanda.com) API.
 [![Development Status](https://pypip.in/status/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
 [![Wheel Status](https://pypip.in/wheel/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
 
+
 ### Code example
 
 ```python
