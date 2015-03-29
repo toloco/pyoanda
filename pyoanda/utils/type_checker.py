@@ -20,11 +20,12 @@ def type_checker(item, checker):
             errors.append(msg)
             continue
         value = item.get(field)
-        typo, rang = check if len(check) > 1 else (check, None)
-        typo = typo if isinstance(typo, tuple) else (typo,)
+        typo = check[0] if isinstance(check[0], tuple) else (check[0],)
+        rang = check[1] if len(check) > 1 else None
 
         if None in typo and value is None:
             continue
+
         elif not isinstance(value, typo):
             msg = "Field '{}'  is not {} type".format(field, typo)
             errors.append(msg)

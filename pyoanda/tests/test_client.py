@@ -36,3 +36,19 @@ class TestClient(unittest.TestCase):
                     "my_account",
                     "my_token"
                 )
+
+    def test_order_creation(self):
+        with mock.patch.object(Client, '_Client__get_credentials', return_value=True) as mock_method:
+            c = Client(
+                "http://mydomain.com",
+                "http://mystreamingdomain.com",
+                "my_account",
+                "my_token"
+            )
+        with mock.patch.object(Client, '_Client__call', return_value=True) as mock_method:
+            assert c.create_order("GPB_EUR", 1)
+
+
+
+
+

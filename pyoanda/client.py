@@ -4,8 +4,14 @@ import datetime
 from logging import getLogger
 from requests.exceptions import RequestException
 from enum import Enum
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)
 
 from .exceptions import BadCredentials, BadRequest
+from .utils.type_checker import type_checker
+
 
 log = getLogger(__name__)
 
@@ -26,7 +32,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/accounts/
         """
-        API_url = "{0}/{1}/accounts/{2}".format(self.domain, self.VERSION, self.account_id)
+        url = "{0}/{1}/accounts/{2}".format(self.domain, self.VERSION, self.account_id)
         try:
             response = self._Client__call(uri=url)
             assert len(response) > 0
@@ -70,7 +76,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getInstrumentList
         """
-        API_url = "{0}/{1}/instruments".format(self.domain, self.VERSION)
+        url = "{0}/{1}/instruments".format(self.domain, self.VERSION)
         params = {"accountId" : self.account_id}
         try:
             response = self._Client__call(uri=url, params=params)
@@ -85,7 +91,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getCurrentPrices
         """
-        API_url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
+        url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
         params = {"accountId" : self.account_id, "instruments": instruments}
         try:
             if stream:
@@ -105,7 +111,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#retrieveInstrumentHistory
         """
-        API_url = "{0}/{1}/candles".format(self.domain, self.VERSION)
+        url = "{0}/{1}/candles".format(self.domain, self.VERSION)
         params = {
             "accountId" : self.account_id,
             "instrument":instrument, 
@@ -131,7 +137,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/orders/#getOrdersForAnAccount
         """
-        API_url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
         params = {
             "instrument":instrument, 
             "count":count
@@ -150,7 +156,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/orders/#createNewOrder
         """
-        API_url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.API_VERSION,self.account_id)
 
         params = {
             "instrument":instrument, 
@@ -170,15 +176,20 @@ class Client(object):
             "instrument": (str,),
             "units": ((float, int),),
             "side":(str, ("buy", "sell")),
-            "order_type":(str, ("limit", "stop", "marketIfTouched", "market")),
-            "expiry":((None, datetime),),
-            "price":((None, float, int),),
-            "lowerBound":((None, float, int),),
-            "upperBound":((None, float, int),),
-            "stopLoss":((None, int),),
-            "takeProfit":((None, int),),
-            "trailingStop":((None, int),)
+            "type":(str, ("limit", "stop", "marketIfTouched", "market")),
+            "expiry":((NoneType, datetime),),
+            "price":((NoneType, float, int),),
+            "lowerBound":((NoneType, float, int),),
+            "upperBound":((NoneType, float, int),),
+            "stopLoss":((NoneType, int),),
+            "takeProfit":((NoneType, int),),
+            "trailingStop":((NoneType, int),)
         } 
+        try:
+            type_checker(params, checker)
+        except TypeError as e:
+            raise BadRequest(e.__str__)
+
         # Remove empty params
         params = {k: v for k, v in params.items() if v}
         try:

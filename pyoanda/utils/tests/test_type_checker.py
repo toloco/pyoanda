@@ -8,6 +8,11 @@ try:
 except ImportError:
     import mock
 
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)
+
 from ..type_checker import type_checker
 
 class TypeCheckerTest(unittest.TestCase):
@@ -15,7 +20,7 @@ class TypeCheckerTest(unittest.TestCase):
         item = {"x": 1, "y": None}
         checker = {
             "x": (int, range(1, 10)),
-            "y" : (None,)
+            "y" : (NoneType,)
         }
         type_checker(item, checker)
 
