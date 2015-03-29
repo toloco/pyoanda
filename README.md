@@ -1,7 +1,5 @@
 # PYOANDA
 
-Python library that wraps [Oanda](http://oanda.com) API.
-
 [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?branch=master)](https://travis-ci.org/toloco/pyoanda)
 [![Coverage Status](https://coveralls.io/repos/toloco/pyoanda/badge.svg)](https://coveralls.io/r/toloco/pyoanda)
 [![Latest Version](https://pypip.in/version/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
@@ -9,6 +7,11 @@ Python library that wraps [Oanda](http://oanda.com) API.
 [![Supported Python implementations](https://pypip.in/implementation/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
 [![Development Status](https://pypip.in/status/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
 [![Wheel Status](https://pypip.in/wheel/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
+
+Python library that wraps [Oanda](http://oanda.com) API. Built on top of requests, it’s easy to use and makes sense.
+
+Pyoanda is released under the [MIT license](https://raw.githubusercontent.com/toloco/pyoanda/master/LICENSE). The source code is on [GitHub](https://github.com/toloco/pyoanda/) and [issues are also tracked on GitHub](https://github.com/toloco/pyoanda/issues).
+
 
 
 ### Code example
@@ -32,7 +35,12 @@ Python library that wraps [Oanda](http://oanda.com) API.
 
 ### Run test
 ```shell
-py.test pyoanda
+python setup.py test
+
+or 
+
+nosetest pyoanda
+
 ```
 
 
