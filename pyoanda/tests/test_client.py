@@ -22,8 +22,7 @@ class TestClient(unittest.TestCase):
     def test_connect_pass(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True) as mock_method:
             c = Client(
-                "http://mydomain.com",
-                "http://mystreamingdomain.com",
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
                 "my_account",
                 "my_token"
             )
@@ -31,8 +30,7 @@ class TestClient(unittest.TestCase):
         with mock.patch.object(Client, 'get_credentials', return_value=False) as mock_method:
             with self.assertRaises(BadCredentials):
                 c = Client(
-                    "http://mydomain.com",
-                    "http://mystreamingdomain.com",
+                    ("http://mydomain.com", "http://mystreamingdomain.com"),
                     "my_account",
                     "my_token"
                 )
@@ -40,8 +38,7 @@ class TestClient(unittest.TestCase):
     def test_order_creation(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True) as mock_method:
             c = Client(
-                "http://mydomain.com",
-                "http://mystreamingdomain.com",
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
                 "my_account",
                 "my_token"
             )

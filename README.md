@@ -32,11 +32,10 @@ python setup.py test
 ### Code example
 
 ```python
-    from pyoanda.client import Client
+    from pyoanda import Client, SANDBOX
 
     c = Client(
-        domain="https://api-fxpractice.oanda.com,
-        domain_stream="https://stream-fxpractice.oanda.com",
+        environment=SANBOX,
         account_id="Your Oanda account ID",
         access_token="Your Oanda access token"
     )

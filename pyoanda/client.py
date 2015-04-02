@@ -18,9 +18,8 @@ log = getLogger(__name__)
 class Client(object):
     API_VERSION = "v1"
     
-    def __init__(self, domain, domain_stream, account_id, access_token):
-        self.domain = domain
-        self.domain_stream = domain_stream
+    def __init__(self, environment, account_id, access_token):
+        self.domain, self.domain_stream = environment
         self.access_token = access_token
         self.account_id = account_id
         if not self.get_credentials():
