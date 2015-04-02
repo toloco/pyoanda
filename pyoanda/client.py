@@ -17,22 +17,24 @@ log = getLogger(__name__)
 
 class Client(object):
     API_VERSION = "v1"
-    SIDES = ("buy", "sell")
-    ORDER_TYPE = ("limit", "stop", "marketIfTouched", "market")
     
     def __init__(self, domain, domain_stream, account_id, access_token):
         self.domain = domain
         self.domain_stream = domain_stream
         self.access_token = access_token
         self.account_id = account_id
-        if not self._Client__get_credentials():
+        if not self.get_credentials():
             raise BadCredentials()
 
-    def __get_credentials(self):
+    def get_credentials(self):
         """
             See more: http://developer.oanda.com/rest-live/accounts/
         """
-        url = "{0}/{1}/accounts/{2}".format(self.domain, self.VERSION, self.account_id)
+        url = "{0}/{1}/accounts/{2}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
         try:
             response = self._Client__call(uri=url)
             assert len(response) > 0
@@ -43,14 +45,27 @@ class Client(object):
             return False
 
     def __call(self, uri, params = None, method="get"):
+        """Only returns the response, nor the status_code
+        """
         if not hasattr(self, "session") or not self.session:
             self.session = requests.Session()
-            self.session.headers.update({'Authorization' : 'Bearer {}'.format(self.access_token)})
+            self.session.headers.update(
+                {'Authorization' : 'Bearer {}'.format(self.access_token)}
+            )
+        kwargs = {
+            "url": uri,
+            "verify": True,
+            "stream": False
+        }
+        if method == "get":
+            kwargs["params"] = params
+        else:
+            kwargs["data"] = params
         try:
-            resp = getattr(self.session, method)(uri, params=params, verify=True, stream = False)
+            resp = getattr(self.session, method)(**kwargs)
             assert resp.status_code == 200
         except AssertionError:
-            raise BadRequest()
+            raise BadRequest(resp.text)
         except Exception as e:
             log.error("Bad response: {}".format(e), exc_info=True)
         else:
@@ -61,9 +76,20 @@ class Client(object):
         """
         if not hasattr(self, "session") or not self.session:
             self.session = requests.Session()
-            self.session.headers.update({'Authorization' : 'Bearer {}'.format(self.access_token)})
+            self.session.headers.update(
+                {'Authorization' : 'Bearer {}'.format(self.access_token)}
+            )
+        kwargs = {
+            "url": uri,
+            "verify": True,
+            "stream": True
+        }
+        if method == "get":
+            kwargs["params"] = params
+        else:
+            kwargs["data"] = params
         try:
-            resp = getattr(self.session, method)(uri, params=params, verify=True, stream = True)
+            resp = getattr(self.session, method)(**kwargs)
             assert resp.status_code == 200
         except AssertionError:
             raise BadRequest()
@@ -76,7 +102,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getInstrumentList
         """
-        url = "{0}/{1}/instruments".format(self.domain, self.VERSION)
+        url = "{0}/{1}/instruments".format(self.domain, self.API_VERSION)
         params = {"accountId" : self.account_id}
         try:
             response = self._Client__call(uri=url, params=params)
@@ -91,13 +117,24 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#getCurrentPrices
         """
-        url = "{0}/{1}/prices".format(self.domain_stream if stream else self.domain, self.VERSION)
+        url = "{0}/{1}/prices".format(
+            self.domain_stream if stream else self.domain,
+            self.API_VERSION
+        )
         params = {"accountId" : self.account_id, "instruments": instruments}
         try:
             if stream:
-                return self._Client__call_stream(uri=url, params=params, method="get")
+                return self._Client__call_stream(
+                    uri=url,
+                    params=params,
+                    method="get"
+                )
             else:
-                return self._Client__call(uri=url, params=params, method="get")
+                return self._Client__call(
+                    uri=url,
+                    params=params,
+                    method="get"
+                )
         except RequestException:
             return False
         except AssertionError:
@@ -111,7 +148,7 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/rates/#retrieveInstrumentHistory
         """
-        url = "{0}/{1}/candles".format(self.domain, self.VERSION)
+        url = "{0}/{1}/candles".format(self.domain, self.API_VERSION)
         params = {
             "accountId" : self.account_id,
             "instrument":instrument, 
@@ -137,7 +174,11 @@ class Client(object):
         """
             See more: http://developer.oanda.com/rest-live/orders/#getOrdersForAnAccount
         """
-        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.VERSION,self.account_id)
+        url = "{0}/{1}/accounts/{2}/orders".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
         params = {
             "instrument":instrument, 
             "count":count
@@ -151,12 +192,18 @@ class Client(object):
         except AssertionError:
             return False
 
-    def create_order(self, instrument, units, side="buy", order_type="market",
-                     expiry=None, price=None, lowerBound=None, upperBound=None, stopLoss=0, takeProfit=0, trailingStop=0):
+    def create_order(self, instrument, units, side="buy", order_type=None,
+                     expiry=None, price=None, lowerBound=None, upperBound=None,
+                     stopLoss=0, takeProfit=0, trailingStop=0
+                    ):
         """
             See more: http://developer.oanda.com/rest-live/orders/#createNewOrder
         """
-        url = "{0}/{1}/accounts/{2}/orders".format(self.domain, self.API_VERSION,self.account_id)
+        url = "{0}/{1}/accounts/{2}/orders".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
 
         params = {
             "instrument":instrument, 
@@ -176,7 +223,7 @@ class Client(object):
             "instrument": (str,),
             "units": ((float, int),),
             "side":(str, ("buy", "sell")),
-            "type":(str, ("limit", "stop", "marketIfTouched", "market")),
+            "type":((NoneType, str), (None, "limit", "stop", "marketIfTouched", "market")),
             "expiry":((NoneType, datetime),),
             "price":((NoneType, float, int),),
             "lowerBound":((NoneType, float, int),),

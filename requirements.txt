@@ -6,4 +6,4 @@ setuptools
 twine
 wheel
 nose
-python-coveralls
+coveralls

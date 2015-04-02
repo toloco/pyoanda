@@ -10,6 +10,6 @@ install:
     - travis_retry pip install -r requirements.txt
     - travis_retry python setup.py install
 script:
-    - python setup.py test
+    - coverage run --source=pyoanda setup.py test
 after_success:
     - coveralls

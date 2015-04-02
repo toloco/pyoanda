@@ -82,7 +82,7 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['requests'],
-    tests_require=['nose'],
+    tests_require=['nose', 'coveralls'],
     test_suite='nose.collector',
 
 
