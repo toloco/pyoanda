@@ -14,7 +14,20 @@ Python library that wraps [Oanda](http://oanda.com) API. Built on top of request
 
 Pyoanda is released under the [MIT license](https://raw.githubusercontent.com/toloco/pyoanda/master/LICENSE). The source code is on [GitHub](https://github.com/toloco/pyoanda/) and [issues are also tracked on GitHub](https://github.com/toloco/pyoanda/issues).
 
+### Install 
+#### Pypi
+```bash
+pip install pyoanda
+```
 
+#### Manual
+```bash
+git clone git@github.com:toloco/pyoanda.git
+cd pyoanda
+python setup.py install
+# Make sure it works
+python setup.py test
+```
 
 ### Code example
 
