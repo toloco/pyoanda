@@ -51,6 +51,8 @@ class Client(object):
             self.session.headers.update(
                 {'Authorization' : 'Bearer {}'.format(self.access_token)}
             )
+        # Remove empty params
+        params = {k: v for k, v in params.items() if v}
         kwargs = {
             "url": uri,
             "verify": True,
@@ -62,13 +64,14 @@ class Client(object):
             kwargs["data"] = params
         try:
             resp = getattr(self.session, method)(**kwargs)
+            rjson = resp.json()
             assert resp.status_code == 200
         except AssertionError:
-            raise BadRequest(resp.text)
+            raise BadRequest("OCode-{}: {}".format(rjson["code"], rjson["message"]))
         except Exception as e:
             log.error("Bad response: {}".format(e), exc_info=True)
         else:
-            return resp.json()
+            return rjson
 
     def __call_stream(self, uri, params = None, method="get"):
         """Returns an stream response
@@ -78,6 +81,8 @@ class Client(object):
             self.session.headers.update(
                 {'Authorization' : 'Bearer {}'.format(self.access_token)}
             )
+        # Remove empty params
+        params = {k: v for k, v in params.items() if v}
         kwargs = {
             "url": uri,
             "verify": True,
@@ -169,7 +174,7 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_account_orders(self, instrument=None, count=50):
+    def get_orders(self, instrument=None, count=50):
         """
             See more: http://developer.oanda.com/rest-live/orders/#getOrdersForAnAccount
         """
@@ -182,14 +187,18 @@ class Client(object):
             "instrument":instrument, 
             "count":count
         }
-        # Remove empty params
-        params = {k: v for k, v in params.items() if v}
         try:
             return self._Client__call(uri=url, params=params, method="get")
         except RequestException:
             return False
         except AssertionError:
             return False
+
+    def get_order(self, order_id):
+        """
+            Se more: http://developer.oanda.com/rest-live/orders/#getInformationForAnOrder
+        """
+        raise NotImplementedError()
 
     def create_order(self, instrument, units, side="buy", order_type=None,
                      expiry=None, price=None, lowerBound=None, upperBound=None,
@@ -245,9 +254,82 @@ class Client(object):
         except AssertionError:
             return False
 
+    def update_order(self, order_id,units, side="buy", order_type=None,
+                     expiry=None, price=None, lowerBound=None, upperBound=None,
+                     stopLoss=0, takeProfit=0, trailingStop=0
+                    ):
+        """
+            Se more: http://developer.oanda.com/rest-live/orders/#modifyExistingOrder
+        """
+        raise NotImplementedError()
+
+    def close_order(self, order_id):
+        """
+            Se more: http://developer.oanda.com/rest-live/orders/#closeOrder
+        """
+        raise NotImplementedError()
+
+    def get_trades(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/trades/#getListOpenTrades
+        """
+        raise NotImplementedError()
+
+    def get_trade(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/trades/#getInformationSpecificTrade
+        """
+        raise NotImplementedError()
+
+    def update_trade(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/trades/#modifyExistingTrade
+        """
+        raise NotImplementedError()
+
+    def close_trade(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/trades/#closeOpenTrade
+        """
+        raise NotImplementedError()
+
+    def get_positions(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/positions/#getListAllOpenPositions
+        """
+        raise NotImplementedError()  
+
+    def get_position(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/positions/#getPositionForInstrument
+        """
+        raise NotImplementedError()
+
+    def close_position(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/positions/#closeExistingPosition
+        """
+        raise NotImplementedError()
 
 
+    def get_transactions(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/transaction-history/#getTransactionHistory
+                     http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
+        """
+        raise NotImplementedError()
 
+    def get_transaction(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/transaction-history/#getInformationForTransaction
+                     http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
+        """
+        raise NotImplementedError()
 
-
+    def get_account_transaction_history(self):
+        """
+            Se more: http://developer.oanda.com/rest-live/transaction-history/#getFullAccountHistory
+                     http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
+        """
+        raise NotImplementedError()
 
