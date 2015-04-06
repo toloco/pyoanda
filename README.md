@@ -35,7 +35,7 @@ python setup.py test
     from pyoanda import Client, SANDBOX
 
     c = Client(
-        environment=SANBOX,
+        environment=SANDBOX,
         account_id="Your Oanda account ID",
         access_token="Your Oanda access token"
     )
