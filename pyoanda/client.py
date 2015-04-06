@@ -3,7 +3,6 @@ import datetime
 
 from logging import getLogger
 from requests.exceptions import RequestException
-from enum import Enum
 try:
     from types import NoneType
 except ImportError:
@@ -332,4 +331,3 @@ class Client(object):
                      http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
         """
         raise NotImplementedError()
-

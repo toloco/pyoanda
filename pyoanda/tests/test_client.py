@@ -13,12 +13,6 @@ from ..exceptions import BadCredentials
 
 
 class TestClient(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
     def test_connect_pass(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True) as mock_method:
             c = Client(
@@ -35,17 +29,32 @@ class TestClient(unittest.TestCase):
                     "my_token"
                 )
 
-    def test_order_creation(self):
+class TestOrders(unittest.TestCase):
+    def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True) as mock_method:
-            c = Client(
+            self.client = Client(
                 ("http://mydomain.com", "http://mystreamingdomain.com"),
                 "my_account",
                 "my_token"
             )
+
+    def test_order_creation(self):
         with mock.patch.object(Client, '_Client__call', return_value=True) as mock_method:
-            assert c.create_order("GPB_EUR", 1)
+            assert self.client.create_order("GPB_EUR", 1)
 
+    def test_get_orders(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True) as mock_method:
+            assert self.client.get_orders()
 
+    def test_get_order(self):
+        pass
 
+    def test_create_order(self):
+        pass
 
+    def test_update_order(self):
+        pass
+
+    def test_close_order(self):
+        pass
 
