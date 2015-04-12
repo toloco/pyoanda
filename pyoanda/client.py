@@ -52,7 +52,8 @@ class Client(object):
                 {'Authorization': 'Bearer {}'.format(self.access_token)}
             )
         # Remove empty params
-        params = {k: v for k, v in params.items() if v}
+        if params:
+            params = {k: v for k, v in params.items() if v}
         kwargs = {
             "url": uri,
             "verify": True,

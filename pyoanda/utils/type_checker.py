@@ -2,8 +2,7 @@ def type_checker(item, checker):
     """Type and range checker
 
         Given field name, check type and value's range
-
-        e.g. 
+        e.g.
         inputs:
         item = {"x": 1, "y": None}
         checker = {
