@@ -233,28 +233,6 @@ class Client(object):
             "takeProfit": takeProfit,
             "trailingStop": trailingStop
         }
-
-        checker = {
-            "instrument": (str,),
-            "units": ((float, int),),
-            "side": (str, ("buy", "sell")),
-            "type": ((NoneType, str),
-                     (None, "limit", "stop", "marketIfTouched", "market")),
-            "expiry": ((NoneType, datetime),),
-            "price": ((NoneType, float, int),),
-            "lowerBound": ((NoneType, float, int),),
-            "upperBound": ((NoneType, float, int),),
-            "stopLoss": ((NoneType, int),),
-            "takeProfit": ((NoneType, int),),
-            "trailingStop": ((NoneType, int),)
-        }
-        try:
-            type_checker(params, checker)
-        except TypeError as e:
-            raise BadRequest(e.__str__)
-
-        # Remove empty params
-        params = {k: v for k, v in params.items() if v}
         try:
             return self._Client__call(uri=url, params=params, method="post")
         except RequestException:
