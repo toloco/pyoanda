@@ -9,6 +9,7 @@ except ImportError:
     import mock
 
 from ..client import Client
+from ..order import Order
 from ..exceptions import BadCredentials
 
 
@@ -41,8 +42,9 @@ class TestOrders(unittest.TestCase):
             )
 
     def test_order_creation(self):
+        order = Order()
         with mock.patch.object(Client, '_Client__call', return_value=True):
-            assert self.client.create_order("GPB_EUR", 1)
+            assert self.client.create_order(order)
 
     def test_get_orders(self):
         with mock.patch.object(Client, '_Client__call', return_value=True):
