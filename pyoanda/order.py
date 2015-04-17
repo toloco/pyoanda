@@ -19,17 +19,8 @@ class Order(object):
 
     def check(self):
         """
-        - Instrument:* Required Instrument to open the order on.
-        - Units: Required The number of units to open order for.
-        - Side: Required Direction of the order, either ‘buy’ or ‘sell’.
-        - Type: Required The type of the order ‘limit’, ‘stop’, ‘marketIfTouched’ or ‘market’.
-        - Expiry: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The order expiration time in UTC. The value specified must be in a valid datetime format.
-        - Price: Required If order type is ‘limit’, ‘stop’, or ‘marketIfTouched’. The price where the order is set to trigger at.
-        - LowerBound: Optional The minimum execution price.
-        - UpperBound: Optional The maximum execution price.
-        - StopLoss: Optional The stop loss price.
-        - TakeProfit: Optional The take profit price.
-        - TrailingStop: Optional The trailing stop distance in pips, up to one decimal place.
+        Logic extracted from:
+        http://developer.oanda.com/rest-live/orders/#createNewOrder
         """
         for k, v in iter(self.__dict__.items()):
             if k not in self.__allowed:

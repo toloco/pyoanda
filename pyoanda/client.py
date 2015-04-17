@@ -1,5 +1,4 @@
 import requests
-import datetime
 
 from logging import getLogger
 from requests.exceptions import RequestException
@@ -9,7 +8,6 @@ except ImportError:
     NoneType = type(None)
 
 from .exceptions import BadCredentials, BadRequest
-from .utils.type_checker import type_checker
 
 
 log = getLogger(__name__)
@@ -207,9 +205,7 @@ class Client(object):
         """
         raise NotImplementedError()
 
-    def create_order(self, instrument, units, side="buy", order_type=None,
-                     expiry=None, price=None, lowerBound=None, upperBound=None,
-                     stopLoss=0, takeProfit=0, trailingStop=0):
+    def create_order(self, order):
         """
             See more:
             http://developer.oanda.com/rest-live/orders/#createNewOrder
@@ -219,35 +215,38 @@ class Client(object):
             self.API_VERSION,
             self.account_id
         )
-
-        params = {
-            "instrument": instrument,
-            "units": units,
-            "side": side,
-            "type": order_type,
-            "expiry": expiry,
-            "price": price,
-            "lowerBound": lowerBound,
-            "upperBound": upperBound,
-            "stopLoss": stopLoss,
-            "takeProfit": takeProfit,
-            "trailingStop": trailingStop
-        }
         try:
-            return self._Client__call(uri=url, params=params, method="post")
+            return self._Client__call(
+                uri=url,
+                params=order.__dict__,
+                method="post"
+            )
         except RequestException:
             return False
         except AssertionError:
             return False
 
-    def update_order(self, order_id, units, side="buy", order_type=None,
-                     expiry=None, price=None, lowerBound=None, upperBound=None,
-                     stopLoss=0, takeProfit=0, trailingStop=0):
+    def update_order(self, order_id, order):
         """
             See more:
             http://developer.oanda.com/rest-live/orders/#modifyExistingOrder
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/orders/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            order_id
+        )
+        try:
+            return self._Client__call(
+                uri=url,
+                params=order.__dict__,
+                method="patch"
+            )
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def close_order(self, order_id):
         """
