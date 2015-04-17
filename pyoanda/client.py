@@ -253,7 +253,18 @@ class Client(object):
             See more:
             http://developer.oanda.com/rest-live/orders/#closeOrder
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/orders/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            order_id
+        )
+        try:
+            return self._Client__call(uri=url, method="delete")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def get_trades(self):
         """
