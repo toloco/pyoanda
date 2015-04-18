@@ -8,12 +8,15 @@ try:
 except ImportError:
     import mock
 
+import requests
+from requests.exceptions import RequestException
+
 from ..client import Client
 from ..order import Order
-from ..exceptions import BadCredentials
+from ..exceptions import BadCredentials, BadRequest
 
 
-class TestClient(unittest.TestCase):
+class TestClientFundation(unittest.TestCase):
     def test_connect_pass(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             Client(
@@ -31,8 +34,40 @@ class TestClient(unittest.TestCase):
                     "my_token"
                 )
 
+    def test_call_pass(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c.session = requests.Session()
+        obj = mock
+        setattr(obj, "json", lambda: 1)
+        setattr(obj, "status_code", 200)
+        with mock.patch.object(c.session, 'get', return_value=obj):
+            c._Client__call(uri="test", params={"test": "test"}, method="get")
 
-class TestOrders(unittest.TestCase):
+        with mock.patch.object(c.session, 'post', return_value=obj):
+            c._Client__call(uri="test", params={"test": "test"}, method="post")
+
+    def test_call_fail(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c.session = requests.Session()
+        obj = mock
+        setattr(obj, "json", lambda: {"message": "Bad request"})
+        setattr(obj, "status_code", 400)
+        with mock.patch.object(c.session, 'get', return_value=obj):
+            with self.assertRaises(BadRequest):
+                c._Client__call(uri="test", params=None, method="get")
+
+
+class TestOrdersAPI(unittest.TestCase):
     def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             self.client = Client(
@@ -40,6 +75,21 @@ class TestOrders(unittest.TestCase):
                 "my_account",
                 "my_token"
             )
+
+    def test_credentials_pass(self):
+        with mock.patch.object(
+            Client, '_Client__call',
+            return_value={"message": "good one"}
+        ):
+            assert self.client.get_credentials()
+
+    def test_credentials_fail(self):
+        with mock.patch.object(Client, '_Client__call', return_value=()):
+            assert not self.client.get_credentials()
+
+        e = RequestException("I fail")
+        with mock.patch.object(Client, '_Client__call', side_effect=e):
+            assert not self.client.get_credentials()
 
     def test_order_creation(self):
         order = Order()

@@ -66,10 +66,12 @@ class Client(object):
             rjson = resp.json()
             assert resp.status_code == 200
         except AssertionError:
-            msg = "OCode-{}: {}".format(rjson["code"], rjson["message"])
+            msg = "OCode-{}: {}".format(resp.status_code, rjson["message"])
             raise BadRequest(msg)
         except Exception as e:
-            log.error("Bad response: {}".format(e), exc_info=True)
+            msg = "Bad response: {}".format(e)
+            log.error(msg, exc_info=True)
+            raise BadRequest(msg)
         else:
             return rjson
 
