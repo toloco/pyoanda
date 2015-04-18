@@ -66,6 +66,39 @@ class TestClientFundation(unittest.TestCase):
             with self.assertRaises(BadRequest):
                 c._Client__call(uri="test", params=None, method="get")
 
+    def test_call_stream_pass(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c.session = requests.Session()
+        obj = mock
+        setattr(obj, "json", lambda: 1)
+        setattr(obj, "status_code", 200)
+        with mock.patch.object(c.session, 'get', return_value=obj):
+            c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
+
+        with mock.patch.object(c.session, 'post', return_value=obj):
+            c._Client__call_stream(uri="test", params={"test": "test"}, method="post")
+
+    def test_call_stream_fail(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c.session = requests.Session()
+        obj = mock
+        setattr(obj, "json", lambda: {"message": "Bad request"})
+        setattr(obj, "status_code", 400)
+        with mock.patch.object(c.session, 'get', return_value=obj):
+            with self.assertRaises(BadRequest):
+                c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
+
+
 
 class TestOrdersAPI(unittest.TestCase):
     def setUp(self):
