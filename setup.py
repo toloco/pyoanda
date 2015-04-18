@@ -1,5 +1,3 @@
-import sys
-import os
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
@@ -9,26 +7,6 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the relevant file
 with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
     long_description = f.read()
-
-PY3 = sys.version_info[0] == 3
-
-# # -*- Installation Requires -*-
-# def strip_comments(l):
-#     return l.split('#', 1)[0].strip()
-
-# def reqs(*f):
-#     return [
-#         r for r in (
-#             strip_comments(l) for l in open(
-#                 os.path.join(os.getcwd(), 'requirements', *f)).readlines()
-#         ) if r]
-
-# install_requires = reqs('base.txt')
-# if not PY3:
-#     install_requires += reqs('p26.txt')
-
-# # -*- Tests Requires -*-
-# tests_require = reqs('test.txt')
 
 setup(
     name='PyOanda',
@@ -85,13 +63,4 @@ setup(
     tests_require=['nose', 'coveralls'],
     test_suite='nose.collector',
 
-
-    # List additional groups of dependencies here (e.g. development
-    # dependencies). You can install these using the following syntax,
-    # for example:
-    # $ pip install -e .[dev,test]
-    # extras_require={
-    #     'dev': ['check-manifest', 'ipdb'],
-    #     'test': ['coverage', 'pytest-sugar', 'nose'],
-    # }
 )
