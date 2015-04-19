@@ -78,10 +78,18 @@ class TestClientFundation(unittest.TestCase):
         setattr(obj, "json", lambda: 1)
         setattr(obj, "status_code", 200)
         with mock.patch.object(c.session, 'get', return_value=obj):
-            c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
+            c._Client__call_stream(
+                uri="test",
+                params={"test": "test"},
+                method="get"
+            )
 
         with mock.patch.object(c.session, 'post', return_value=obj):
-            c._Client__call_stream(uri="test", params={"test": "test"}, method="post")
+            c._Client__call_stream(
+                uri="test",
+                params={"test": "test"},
+                method="post"
+            )
 
     def test_call_stream_fail(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -98,6 +106,31 @@ class TestClientFundation(unittest.TestCase):
             with self.assertRaises(BadRequest):
                 c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
 
+    def test_session_stablisher(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c._Client__session_stablisher()
+
+
+class TestInstrumentsAPI(unittest.TestCase):
+    def setUp(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            self.client = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+
+    def test_get_instruments_pass(self):
+        with mock.patch.object(
+            Client, '_Client__call',
+            return_value={"message": "good one"}
+        ):
+            assert self.client.get_instruments()
 
 
 class TestOrdersAPI(unittest.TestCase):

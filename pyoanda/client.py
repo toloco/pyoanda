@@ -41,14 +41,17 @@ class Client(object):
         except AssertionError:
             return False
 
-    def __call(self, uri, params=None, method="get"):
-        """Only returns the response, nor the status_code
-        """
+    def __session_stablisher(self):
         if not hasattr(self, "session") or not self.session:
             self.session = requests.Session()
             self.session.headers.update(
                 {'Authorization': 'Bearer {}'.format(self.access_token)}
             )
+
+    def __call(self, uri, params=None, method="get"):
+        """Only returns the response, nor the status_code
+        """
+        self._Client__session_stablisher()
         # Remove empty params
         if params:
             params = {k: v for k, v in params.items() if v}
@@ -78,11 +81,7 @@ class Client(object):
     def __call_stream(self, uri, params=None, method="get"):
         """Returns an stream response
         """
-        if not hasattr(self, "session") or not self.session:
-            self.session = requests.Session()
-            self.session.headers.update(
-                {'Authorization': 'Bearer {}'.format(self.access_token)}
-            )
+        self._Client__session_stablisher()
         # Remove empty params
         params = {k: v for k, v in params.items() if v}
         kwargs = {
