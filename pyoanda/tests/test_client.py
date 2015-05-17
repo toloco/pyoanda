@@ -132,6 +132,13 @@ class TestInstrumentsAPI(unittest.TestCase):
         ):
             assert self.client.get_instruments()
 
+    def test_get_prices(self):
+        with mock.patch.object(
+            Client, '_Client__call',
+            return_value={"message": "good one"}
+        ):
+            assert self.client.get_prices(instruments="EUR_GBP", stream=False)
+
 
 class TestOrdersAPI(unittest.TestCase):
     def setUp(self):
