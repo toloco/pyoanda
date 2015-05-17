@@ -15,7 +15,7 @@ setup(
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
     version='0.5.0',
-    description='PyOanda',
+    description=long_description,
     long_description=long_description,
     url='https://github.com/toloco/pyoanda',
     author='Tolo Palmer',
