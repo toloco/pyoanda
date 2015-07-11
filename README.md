@@ -2,11 +2,8 @@
 
 [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?branch=master)](https://travis-ci.org/toloco/pyoanda)
 [![Coverage Status](https://coveralls.io/repos/toloco/pyoanda/badge.svg)](https://coveralls.io/r/toloco/pyoanda)
-[![Latest Version](https://pypip.in/version/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
-[![Supported Python versions](https://pypip.in/py_versions/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
-[![Supported Python implementations](https://pypip.in/implementation/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
-[![Development Status](https://pypip.in/status/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
-[![Wheel Status](https://pypip.in/wheel/pyoanda/badge.svg)](https://pypi.python.org/pypi/pyoanda/)
+[![PyPi version](https://pypip.in/v/$REPO/badge.png)](https://crate.io/packages/pyaonda/)
+[![PyPi downloads](https://pypip.in/d/$REPO/badge.png)](https://crate.io/packages/pyoanda/)
 
 
 Oanda’s API python wrapper. Robust and Fast API wrapper for your Forex bot
