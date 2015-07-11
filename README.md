@@ -58,9 +58,6 @@ nosetest pyoanda
 ```
 
 
-See [Pypi](https://pypi.python.org/pypi/pyoanda/0.1.0) project page.
+See [Pypi](https://pypi.python.org/pypi/pyoanda/0.5.1) project page.
 
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/toloco/pyoanda/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
