@@ -1,4 +1,6 @@
 from .client import Client
+from .order import Order
+
 
 # OANDA API URLS
 SANDBOX = (

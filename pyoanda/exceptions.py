@@ -4,5 +4,3 @@ class BadCredentials(Exception):
 
 class BadRequest(Exception):
     pass
-
-

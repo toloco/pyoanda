@@ -1,7 +1,4 @@
-ipdb
-ipython
 requests
-enum34
 setuptools
 twine
 wheel
