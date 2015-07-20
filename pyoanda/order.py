@@ -22,7 +22,7 @@ class Order(object):
         Logic extracted from:
         http://developer.oanda.com/rest-live/orders/#createNewOrder
         """
-        for k, v in iter(self.__dict__.items()):
+        for k in iter(self.__dict__.keys()):
             if k not in self.__allowed:
                 raise TypeError("Parameter not allowed {}".format(k))
 
