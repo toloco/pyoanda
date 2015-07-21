@@ -44,7 +44,7 @@ class TestClientFundation(unittest.TestCase):
             c.session = requests.Session()
         obj = mock
         setattr(obj, "json", lambda: 1)
-        setattr(obj, "status_code", 200)
+        setattr(obj, "ok", True)
         with mock.patch.object(c.session, 'get', return_value=obj):
             c._Client__call(uri="test", params={"test": "test"}, method="get")
 
@@ -62,6 +62,7 @@ class TestClientFundation(unittest.TestCase):
         obj = mock
         setattr(obj, "json", lambda: {"message": "Bad request"})
         setattr(obj, "status_code", 400)
+        setattr(obj, "ok", False)
         with mock.patch.object(c.session, 'get', return_value=obj):
             with self.assertRaises(BadRequest):
                 c._Client__call(uri="test", params=None, method="get")
@@ -76,7 +77,7 @@ class TestClientFundation(unittest.TestCase):
             c.session = requests.Session()
         obj = mock
         setattr(obj, "json", lambda: 1)
-        setattr(obj, "status_code", 200)
+        setattr(obj, "ok", True)
         with mock.patch.object(c.session, 'get', return_value=obj):
             c._Client__call_stream(
                 uri="test",
@@ -102,6 +103,7 @@ class TestClientFundation(unittest.TestCase):
         obj = mock
         setattr(obj, "json", lambda: {"message": "Bad request"})
         setattr(obj, "status_code", 400)
+        setattr(obj, "ok", False)
         with mock.patch.object(c.session, 'get', return_value=obj):
             with self.assertRaises(BadRequest):
                 c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
