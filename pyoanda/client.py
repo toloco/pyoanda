@@ -67,7 +67,7 @@ class Client(object):
         try:
             resp = getattr(self.session, method)(**kwargs)
             rjson = resp.json()
-            assert resp.status_code == 200
+            assert resp.ok
         except AssertionError:
             msg = "OCode-{}: {}".format(resp.status_code, rjson["message"])
             raise BadRequest(msg)
@@ -95,7 +95,7 @@ class Client(object):
             kwargs["data"] = params
         try:
             resp = getattr(self.session, method)(**kwargs)
-            assert resp.status_code == 200
+            assert resp.ok
         except AssertionError:
             raise BadRequest(resp.status_code)
         except Exception as e:
