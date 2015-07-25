@@ -204,7 +204,21 @@ class Client(object):
             See more:
             http://developer.oanda.com/rest-live/orders/#getInformationForAnOrder
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/orders/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            order_id
+        )
+        try:
+            return self._Client__call(
+                uri=url,
+                method="get"
+            )
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def create_order(self, order):
         """
