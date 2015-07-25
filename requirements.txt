@@ -4,3 +4,4 @@ twine
 wheel
 nose
 coveralls
+requests-mock
