@@ -101,5 +101,4 @@ class OrderClassTest(unittest.TestCase):
             price="10.0",
             expiry=datetime.now()
         )
-        with self.assertRaises(TypeError):
-            order.check()
+        order.check()

@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
+from decimal import Decimal
 try:
     from types import NoneType
 except ImportError:
@@ -55,9 +56,12 @@ class Order(object):
                 type(self.expiry), datetime)
             raise TypeError(msg)
 
-        if hasattr(self, "price") and not isinstance(self.price, (int, float)):
-            msg = "Expiry must be int or float, '{0}' found".format(
-                type(self.price))
-            raise TypeError(msg)
+        if hasattr(self, "price"):
+            try:
+                Decimal(self.price)                
+            except decimal.InvalidOperation:
+                msg = "Expiry must be int or float, '{0}' found".format(
+                    type(self.price))
+                raise TypeError(msg)
 
         return True
