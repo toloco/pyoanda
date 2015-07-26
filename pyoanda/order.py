@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 try:
     from types import NoneType
 except ImportError:
@@ -58,8 +58,8 @@ class Order(object):
 
         if hasattr(self, "price"):
             try:
-                Decimal(self.price)                
-            except decimal.InvalidOperation:
+                Decimal(self.price)
+            except InvalidOperation:
                 msg = "Expiry must be int or float, '{0}' found".format(
                     type(self.price))
                 raise TypeError(msg)

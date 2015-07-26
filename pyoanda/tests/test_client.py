@@ -106,7 +106,11 @@ class TestClientFundation(unittest.TestCase):
         setattr(obj, "ok", False)
         with mock.patch.object(c.session, 'get', return_value=obj):
             with self.assertRaises(BadRequest):
-                c._Client__call_stream(uri="test", params={"test": "test"}, method="get")
+                c._Client__call_stream(
+                    uri="test",
+                    params={"test": "test"},
+                    method="get"
+                )
 
     def test_session_stablisher(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
