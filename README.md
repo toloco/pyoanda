@@ -29,10 +29,10 @@ python setup.py test
 ### Code example
 
 ```python
-    from pyoanda import Client, SANDBOX
+    from pyoanda import Client, PRACTICE
 
     c = Client(
-        environment=SANDBOX,
+        environment=PRACTICE,
         account_id="Your Oanda account ID",
         access_token="Your Oanda access token"
     )
@@ -43,6 +43,25 @@ python setup.py test
         granularity="S30"
     )
 ```
+
+Note that if you are indenting to use the sandbox environment, you should first use the  API to create an account then use the account_id to run the example above.
+
+```python
+    from pyoanda import Client, SANDBOX
+
+    c = Client(
+        environment=SANDBOX,
+        account_id=None,
+        access_token=None
+    )
+
+    # Create an account
+    user = c.create_account()
+
+    # Retrieve the username and accountId values for future use
+    print "username: %s\naccount_id: %d" % (user['username'], user['accountId'])
+```
+
 
 ### Run test
 ```shell
