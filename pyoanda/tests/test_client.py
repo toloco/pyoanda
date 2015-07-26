@@ -176,6 +176,8 @@ class TestOrdersAPI(unittest.TestCase):
             assert self.client.get_orders()
 
     def test_get_order(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.get_order(1)
         pass
 
     def test_create_order(self):
