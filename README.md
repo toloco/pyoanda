@@ -49,11 +49,7 @@ Note that if you are indenting to use the sandbox environment, you should first 
 ```python
     from pyoanda import Client, SANDBOX
 
-    c = Client(
-        environment=SANDBOX,
-        account_id=None,
-        access_token=None
-    )
+    c = Client(environment=SANDBOX)
 
     # Create an account
     user = c.create_account()

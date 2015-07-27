@@ -137,6 +137,7 @@ class TestClientFundation(unittest.TestCase):
             r = c._Client__call('http://www.example.com/')
             assert isinstance(r['float'], Decimal)
 
+
 class TestInstrumentsAPI(unittest.TestCase):
     def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -235,4 +236,3 @@ class TestAccountAPI(unittest.TestCase):
         with mock.patch.object(Client, '_Client__call', return_value=True):
             assert self.client.get_accounts('bob')
             assert self.client.get_accounts(username='bob')
-
