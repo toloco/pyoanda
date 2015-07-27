@@ -1,6 +1,8 @@
 from .client import Client
 from .order import Order
 
+__version__ = "0.7"
+
 
 # OANDA API URLS
 SANDBOX = (
