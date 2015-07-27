@@ -16,10 +16,11 @@ log = getLogger(__name__)
 class Client(object):
     API_VERSION = "v1"
 
-    def __init__(self, environment, account_id, access_token):
+    def __init__(self, environment, account_id, access_token, json_options=None):
         self.domain, self.domain_stream = environment
         self.access_token = access_token
         self.account_id = account_id
+        self.json_options = json_options or {}
         if account_id and not self.get_credentials():
             raise BadCredentials()
 
@@ -67,7 +68,7 @@ class Client(object):
             kwargs["data"] = params
         try:
             resp = getattr(self.session, method)(**kwargs)
-            rjson = resp.json()
+            rjson = resp.json(**self.json_options)
             assert resp.ok
         except AssertionError:
             msg = "OCode-{}: {}".format(resp.status_code, rjson["message"])

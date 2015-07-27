@@ -10,6 +10,9 @@ except ImportError:
 
 import requests
 from requests.exceptions import RequestException
+import requests_mock
+import json
+from decimal import Decimal
 
 from ..client import Client
 from ..order import Order
@@ -121,6 +124,18 @@ class TestClientFundation(unittest.TestCase):
             )
             c._Client__session_stablisher()
 
+    @requests_mock.Mocker()
+    def test_custom_json_options(self, m):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            c = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+            c.json_options['parse_float'] = Decimal
+            m.get(requests_mock.ANY, text=json.dumps({'float': 1.01}))
+            r = c._Client__call('http://www.example.com/')
+            assert isinstance(r['float'], Decimal)
 
 class TestInstrumentsAPI(unittest.TestCase):
     def setUp(self):
