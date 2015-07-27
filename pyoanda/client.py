@@ -20,7 +20,7 @@ class Client(object):
         self.domain, self.domain_stream = environment
         self.access_token = access_token
         self.account_id = account_id
-        if not self.get_credentials():
+        if account_id and not self.get_credentials():
             raise BadCredentials()
 
     def get_credentials(self):
@@ -44,9 +44,10 @@ class Client(object):
     def __session_stablisher(self):
         if not hasattr(self, "session") or not self.session:
             self.session = requests.Session()
-            self.session.headers.update(
-                {'Authorization': 'Bearer {}'.format(self.access_token)}
-            )
+            if self.access_token:
+                self.session.headers.update(
+                    {'Authorization': 'Bearer {}'.format(self.access_token)}
+                )
 
     def __call(self, uri, params=None, method="get"):
         """Only returns the response, nor the status_code
@@ -353,3 +354,54 @@ class Client(object):
             http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
         """
         raise NotImplementedError()
+
+    def create_account(self, currency=None):
+        """ Create a new account.
+        
+            This call is only available on the sandbox system. Please
+            create accounts on fxtrade.oanda.com on our production
+            system.
+
+            See more:
+            http://developer.oanda.com/rest-sandbox/accounts/#-a-name-createtestaccount-a-create-a-test-account
+        """
+        url = "{0}/{1}/accounts".format(
+            self.domain,
+            self.API_VERSION
+        )
+        params = {
+            "currency": currency
+        }
+        try:
+            return self._Client__call(uri=url, params=params, method="post")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+    def get_accounts(self, username=None):
+        """ Get a list of accounts owned by the user.
+
+            Parameters
+            ----------
+            username : string
+                The name of the user. Note: This is only required on the
+                sandbox, on production systems your access token will
+                identify you.
+
+            See more:
+            http://developer.oanda.com/rest-sandbox/accounts/#-a-name-getaccountsforuser-a-get-accounts-for-a-user
+        """
+        url = "{0}/{1}/accounts".format(
+            self.domain,
+            self.API_VERSION
+        )
+        params = {
+            "username": username
+        }
+        try:
+            return self._Client__call(uri=url, params=params, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
