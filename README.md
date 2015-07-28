@@ -58,6 +58,8 @@ Note that if you are indenting to use the sandbox environment, you should first 
     print "username: %s\naccount_id: %d" % (user['username'], user['accountId'])
 ```
 
+Check out the [examples gallery](examples) (Working progress)
+
 
 ### Run test
 ```shell
