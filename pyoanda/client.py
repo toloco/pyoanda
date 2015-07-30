@@ -62,7 +62,7 @@ class Client(object):
         self._Client__session_stablisher()
         # Remove empty params
         if params:
-            params = {k: v for k, v in params.items() if v}
+            params = {k: v for k, v in params.items() if v is not None}
         kwargs = {
             "url": uri,
             "verify": True,
@@ -286,33 +286,140 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_trades(self):
-        """
+    def get_trades(self, max_id=None, count=None, instrument=None, ids=None):
+        """ Get a list of open trades
+
+            Parameters
+            ----------
+            max_id : int
+                The server will return trades with id less than or equal
+                to this, in descending order (for pagination)
+            count : int
+                Maximum number of open trades to return. Default: 50 Max
+                value: 500
+            instrument : str
+                Retrieve open trades for a specific instrument only
+                Default: all
+            ids : list
+                A list of trades to retrieve. Maximum number of ids: 50.
+                No other parameter may be specified with the ids
+                parameter.
+
             See more:
             http://developer.oanda.com/rest-live/trades/#getListOpenTrades
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/trades".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
+        params = {
+            "maxId": int(max_id) if max_id is not None and max_id > 0 else None,
+            "count": int(count) if count is not None and count > 0 else None,
+            "instrument": instrument,
+            "ids": ','.join([str(x) for x in ids]) if ids else None
+        }
 
-    def get_trade(self):
-        """
+        try:
+            return self._Client__call(uri=url, params=params, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+    def get_trade(self, trade_id):
+        """ Get information on a specific trade.
+            
+            Parameters
+            ----------
+            trade_id : int
+                The id of the trade to get information on.
+
             See more:
             http://developer.oanda.com/rest-live/trades/#getInformationSpecificTrade
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/trades/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            trade_id
+        )
+        try:
+            return self._Client__call(uri=url, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
-    def update_trade(self):
-        """
+    def update_trade(
+        self,
+        trade_id,
+        stop_loss=None,
+        take_profit=None,
+        trailing_stop=None
+    ):
+        """ Modify an existing trade.
+
+            Note: Only the specified parameters will be modified. All
+            other parameters will remain unchanged. To remove an
+            optional parameter, set its value to 0.
+
+            Parameters
+            ----------
+            trade_id : int
+                The id of the trade to modify.
+            stop_loss : number
+                Stop Loss value.
+            take_profit : number
+                Take Profit value.
+            trailing_stop : number
+                Trailing Stop distance in pips, up to one decimal place
+            
             See more:
             http://developer.oanda.com/rest-live/trades/#modifyExistingTrade
         """
+        url = "{0}/{1}/accounts/{2}/trades/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            trade_id
+        )
+        params = {
+            "stopLoss": stop_loss,
+            "takeProfit": take_profit,
+            "trailingStop": trailing_stop
+        }
+        try:
+            return self._Client__call(uri=url, params=params, method="patch")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
         raise NotImplementedError()
 
-    def close_trade(self):
-        """
+    def close_trade(self, trade_id):
+        """ Close an open trade.
+
+            Parameters
+            ----------
+            trade_id : int
+                The id of the trade to close.
+
             See more:
             http://developer.oanda.com/rest-live/trades/#closeOpenTrade
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/trades/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            trade_id
+        )
+        try:
+            return self._Client__call(uri=url, method="delete")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def get_positions(self):
         """ Get a list of all open positions.
