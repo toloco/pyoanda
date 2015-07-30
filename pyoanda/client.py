@@ -315,25 +315,70 @@ class Client(object):
         raise NotImplementedError()
 
     def get_positions(self):
-        """
+        """ Get a list of all open positions.
+
             See more:
             http://developer.oanda.com/rest-live/positions/#getListAllOpenPositions
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/positions".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
+        try:
+            return self._Client__call(uri=url, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
-    def get_position(self):
-        """
+    def get_position(self, instrument):
+        """ Get the position for an instrument.
+            
+            Parameters
+            ----------
+            instrument : string
+                The instrument to get the open position for.
+
             See more:
             http://developer.oanda.com/rest-live/positions/#getPositionForInstrument
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/positions/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            instrument
+        )
+        try:
+            return self._Client__call(uri=url, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
-    def close_position(self):
-        """
+    def close_position(self, instrument):
+        """ Close an existing position
+
+            Parameters
+            ----------
+            instrument : string
+                The instrument to close the position for.
+
             See more:
             http://developer.oanda.com/rest-live/positions/#closeExistingPosition
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/positions/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            instrument
+        )
+        try:
+            return self._Client__call(uri=url, method="delete")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def get_transactions(self):
         """
