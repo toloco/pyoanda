@@ -56,8 +56,23 @@ class Client(object):
                     {'Authorization': 'Bearer {}'.format(self.access_token)}
                 )
 
-    def __call(self, uri, params=None, method="get"):
-        """Only returns the response, nor the status_code
+    def __call_raw(self, uri, params=None, method="get", stream=False):
+        """ Makes a raw call to the API with minimal processing.
+
+            Parameters
+            ----------
+            url : string
+                The full URL to request.
+            params: dict
+                A list of parameters to send with the request.  This
+                will be sent as data for methods that accept a request
+                body and will otherwise be sent as query parameters.
+            method : str
+                The HTTP method to use.
+            stream : bool
+                Whether to stream the response.
+
+            Returns a requests.Response object.
         """
         self._Client__session_stablisher()
         # Remove empty params
@@ -66,14 +81,20 @@ class Client(object):
         kwargs = {
             "url": uri,
             "verify": True,
-            "stream": False
+            "stream": stream
         }
         if method == "get":
             kwargs["params"] = params
         else:
             kwargs["data"] = params
+            
+        return getattr(self.session, method)(**kwargs)
+
+    def __call(self, uri, params=None, method="get"):
+        """Only returns the response, nor the status_code
+        """
         try:
-            resp = getattr(self.session, method)(**kwargs)
+            resp = self.__call_raw(uri, params, method, False)
             rjson = resp.json(**self.json_options)
             assert resp.ok
         except AssertionError:
@@ -89,20 +110,8 @@ class Client(object):
     def __call_stream(self, uri, params=None, method="get"):
         """Returns an stream response
         """
-        self._Client__session_stablisher()
-        # Remove empty params
-        params = {k: v for k, v in params.items() if v}
-        kwargs = {
-            "url": uri,
-            "verify": True,
-            "stream": True
-        }
-        if method == "get":
-            kwargs["params"] = params
-        else:
-            kwargs["data"] = params
         try:
-            resp = getattr(self.session, method)(**kwargs)
+            resp = self.__call_raw(uri, params, method, True)
             assert resp.ok
         except AssertionError:
             raise BadRequest(resp.status_code)
@@ -487,29 +496,100 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_transactions(self):
-        """
+    def get_transactions(self, maxId=None, count=None, instrument=None, ids=None):
+        """ Get a list of transactions.
+
+            Parameters
+            ----------
+            maxId : int
+                The server will return transactions with id less than or
+                equal to this, in descending order (for pagination).
+            count : int
+                Maximum number of open transactions to return. Default:
+                50. Max value: 500.
+            instrument : str
+                Retrieve open transactions for a specific instrument
+                only. Default: all.
+            ids : list
+                A list of transactions to retrieve. Maximum number of
+                ids: 50.  No other parameter may be specified with the
+                ids parameter.
+
             See more:
             http://developer.oanda.com/rest-live/transaction-history/#getTransactionHistory
             http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/transactions".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
+        params = {
+            "maxId": int(maxId) if maxId is not None and maxId > 0 else None,
+            "count": int(count) if count is not None and count > 0 else None,
+            "instrument": instrument,
+            "ids": ','.join([str(x) for x in ids]) if ids else None
+        }
 
-    def get_transaction(self):
-        """
+        try:
+            return self._Client__call(uri=url, params=params, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
+
+
+    def get_transaction(self, transaction_id):
+        """ Get information on a specific transaction.
+            
+            Parameters
+            ----------
+            transaction_id : int
+                The id of the transaction to get information on.
+
             See more:
             http://developer.oanda.com/rest-live/transaction-history/#getInformationForTransaction
             http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/transactions/{3}".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id,
+            transaction_id
+        )
+        try:
+            return self._Client__call(uri=url, method="get")
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
-    def get_account_transaction_history(self):
-        """
+    def request_transaction_history(self):
+        """ Request full account history.
+
+            Submit a request for a full transaction history.  A
+            successfully accepted submission results in a response
+            containing a URL in the Location header to a file that will
+            be available once the request is served. Response for the
+            URL will be HTTP 404 until the file is ready. Once served
+            the URL will be valid for a certain amount of time.
+
             See more:
             http://developer.oanda.com/rest-live/transaction-history/#getFullAccountHistory
             http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
         """
-        raise NotImplementedError()
+        url = "{0}/{1}/accounts/{2}/alltransactions".format(
+            self.domain,
+            self.API_VERSION,
+            self.account_id
+        )
+        try:
+            resp = self.__call_raw(url)
+            return resp.headers['location']
+        except RequestException:
+            return False
+        except AssertionError:
+            return False
 
     def create_account(self, currency=None):
         """ Create a new account.
