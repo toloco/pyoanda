@@ -325,6 +325,7 @@ class TestTransactionAPI(unittest.TestCase):
                 "my_account",
                 "my_token"
             )
+
     def test_get_transactions(self):
         with mock.patch.object(Client, '_Client__call', return_value=True):
             assert self.client.get_transactions()

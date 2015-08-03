@@ -494,12 +494,12 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_transactions(self, maxId=None, count=None, instrument=None, ids=None):
+    def get_transactions(self, max_id=None, count=None, instrument=None, ids=None):
         """ Get a list of transactions.
 
             Parameters
             ----------
-            maxId : int
+            max_id : int
                 The server will return transactions with id less than or
                 equal to this, in descending order (for pagination).
             count : int
@@ -523,7 +523,7 @@ class Client(object):
             self.account_id
         )
         params = {
-            "maxId": int(maxId) if maxId is not None and maxId > 0 else None,
+            "maxId": int(max_id) if max_id is not None and max_id > 0 else None,
             "count": int(count) if count is not None and count > 0 else None,
             "instrument": instrument,
             "ids": ','.join([str(x) for x in ids]) if ids else None
