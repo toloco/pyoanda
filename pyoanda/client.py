@@ -361,9 +361,9 @@ class Client(object):
     def update_trade(
         self,
         trade_id,
-        stopLoss=None,
-        takeProfit=None,
-        trailingStop=None
+        stop_loss=None,
+        take_profit=None,
+        trailing_stop=None
     ):
         """ Modify an existing trade.
 
@@ -375,11 +375,11 @@ class Client(object):
             ----------
             trade_id : int
                 The id of the trade to modify.
-            stopLoss : number
+            stop_loss : number
                 Stop Loss value.
-            takeProfit : number
+            take_profit : number
                 Take Profit value.
-            trailingStop : number
+            trailing_stop : number
                 Trailing Stop distance in pips, up to one decimal place
             
             See more:
@@ -392,9 +392,9 @@ class Client(object):
             trade_id
         )
         params = {
-            "stopLoss": stopLoss,
-            "takeProfit": takeProfit,
-            "trailingStop": trailingStop
+            "stopLoss": stop_loss,
+            "takeProfit": take_profit,
+            "trailingStop": trailing_stop
         }
         try:
             return self._Client__call(uri=url, params=params, method="patch")
