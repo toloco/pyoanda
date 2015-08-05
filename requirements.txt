@@ -5,3 +5,4 @@ wheel
 nose
 coveralls
 requests-mock
+sphinx
