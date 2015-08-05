@@ -260,6 +260,7 @@ class TestPositionAPI(unittest.TestCase):
             assert self.client.close_position('AUD_USD')
             assert self.client.close_position(instrument='AUD_USD')
 
+
 class TestTradeAPI(unittest.TestCase):
     def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -293,3 +294,26 @@ class TestTradeAPI(unittest.TestCase):
             assert self.client.close_trade(1)
             assert self.client.close_trade(trade_id=1)
 
+
+class TestTransactionAPI(unittest.TestCase):
+    def setUp(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            self.client = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+
+    def test_get_transactions(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.get_transactions()
+
+    def test_get_transaction(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.get_transaction(1)
+
+    @requests_mock.Mocker()
+    def test_request_transaction_history(self, m):
+        location = 'http://example.com/transactions.json.gz'
+        m.get(requests_mock.ANY, headers={'Location': location}, status_code=202)
+        self.assertEqual(location, self.client.request_transaction_history())
