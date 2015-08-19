@@ -117,15 +117,6 @@ class TestClientFundation(unittest.TestCase):
                     method="get"
                 )
 
-    def test_session_stablisher(self):
-        with mock.patch.object(Client, 'get_credentials', return_value=True):
-            c = Client(
-                ("http://mydomain.com", "http://mystreamingdomain.com"),
-                "my_account",
-                "my_token"
-            )
-            c._Client__session_stablisher()
-
     @requests_mock.Mocker()
     def test_custom_json_options(self, m):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
