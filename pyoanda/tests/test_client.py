@@ -163,6 +163,13 @@ class TestInstrumentsAPI(unittest.TestCase):
         ):
             assert self.client.get_prices(instruments="EUR_GBP", stream=False)
 
+    def test_get_instrument_history(self):
+        with mock.patch.object(
+            Client, '_Client__call',
+            return_value=[{}]
+        ):
+            assert self.client.get_instrument_history('EUR_GBP')
+
 
 class TestOrdersAPI(unittest.TestCase):
     def setUp(self):
@@ -188,11 +195,6 @@ class TestOrdersAPI(unittest.TestCase):
         with mock.patch.object(Client, '_Client__call', side_effect=e):
             assert not self.client.get_credentials()
 
-    def test_order_creation(self):
-        order = Order()
-        with mock.patch.object(Client, '_Client__call', return_value=True):
-            assert self.client.create_order(order)
-
     def test_get_orders(self):
         with mock.patch.object(Client, '_Client__call', return_value=True):
             assert self.client.get_orders()
@@ -200,16 +202,20 @@ class TestOrdersAPI(unittest.TestCase):
     def test_get_order(self):
         with mock.patch.object(Client, '_Client__call', return_value=True):
             assert self.client.get_order(1)
-        pass
 
     def test_create_order(self):
-        pass
+        order = Order(instrument="GBP_EUR", units=1, side="buy", type="market")
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.create_order(order)
 
     def test_update_order(self):
-        pass
+        order = Order(instrument="GBP_EUR", units=1, side="buy", type="market")
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.update_order(1, order)
 
     def test_close_order(self):
-        pass
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.close_order(1)
 
 
 class TestAccountAPI(unittest.TestCase):

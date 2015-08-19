@@ -1,5 +1,6 @@
 # PYOANDA
 
+[![Documentation Status](https://readthedocs.org/projects/pyoanda/badge/?version=latest)](https://readthedocs.org/projects/pyoanda/?badge=latest)
 [![Build Status](https://travis-ci.org/toloco/pyoanda.svg?branch=master)](https://travis-ci.org/toloco/pyoanda)
 [![Coverage Status](https://coveralls.io/repos/toloco/pyoanda/badge.svg)](https://coveralls.io/r/toloco/pyoanda)
 [![PyPi version](https://img.shields.io/pypi/v/pyoanda.svg)](https://pypi.python.org/pypi/pyoanda)
@@ -11,7 +12,7 @@ Python library that wraps [Oanda](http://oanda.com) API. Built on top of request
 
 Pyoanda is released under the [MIT license](https://raw.githubusercontent.com/toloco/pyoanda/master/LICENSE). The source code is on [GitHub](https://github.com/toloco/pyoanda/) and [issues are also tracked on GitHub](https://github.com/toloco/pyoanda/issues). Works well with python  __2.7, 3, 3.1, 3.2, 3.3, 3.4 and pypy__.
 
-### Install 
+### Install
 #### Pypi
 ```bash
 pip install pyoanda
@@ -65,7 +66,7 @@ Check out the [examples gallery](examples) (Working progress)
 ```shell
 python setup.py test
 
-or 
+or
 
 nosetest pyoanda
 
@@ -73,5 +74,4 @@ nosetest pyoanda
 
 
 See [Pypi](https://pypi.python.org/pypi/pyoanda) project page.
-
-
+See [Docs](http://pyoanda.readthedocs.org/) project page.
