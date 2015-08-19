@@ -11,13 +11,14 @@ Pyoanda is on the Python Package Index (PyPI), so it can be installed standard P
 
 
 Pypi
-====
+----
+
 .. code-block:: bash
   $ pip install pyoanda
 
 
 Manual
-======
+------
 
 .. code-block:: bash
   $ git clone git@github.com:toloco/pyoanda.git
