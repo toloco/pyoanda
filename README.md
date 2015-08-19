@@ -74,3 +74,4 @@ nosetest pyoanda
 
 
 See [Pypi](https://pypi.python.org/pypi/pyoanda) project page.
+See [Docs](http://pyoanda.readthedocs.org/) project page.
