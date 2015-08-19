@@ -1,17 +1,25 @@
-.. pyoanda documentation master file, created by
-   sphinx-quickstart on Thu Jul 30 20:48:12 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to pyoanda's documentation!
 ===================================
 
 Contents:
 
 .. toctree::
+   :maxdepth: 2
+
+   license
+   install
+   usage
+
+.. toctree::
    :maxdepth: 4
 
    pyoanda
+
+
+.. toctree::
+  :maxdepth: 1
+  oanda
+  .. _`Pypi project page`: https://pypi.python.org/pypi/pyoanda
 
 
 Indices and tables
@@ -20,4 +28,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
