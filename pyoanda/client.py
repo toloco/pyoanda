@@ -155,9 +155,9 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_instrument_history(self, instrument, candle_format, granularity,
-                               count=500, daily_alignment=None,
-                               alignment_timezone=None,
+    def get_instrument_history(self, instrument, candle_format="bidask",
+                               granularity='S5', count=500,
+                               daily_alignment=None, alignment_timezone=None,
                                weekly_alignment="Monday", start=None,
                                end=None):
         """
@@ -177,8 +177,6 @@ class Client(object):
             "start": start,
             "end": end,
         }
-        # Remove empty params
-        params = {k: v for k, v in params.items() if v}
         try:
             return self._Client__call(uri=url, params=params, method="get")
         except RequestException:
