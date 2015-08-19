@@ -63,7 +63,7 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=['requests'],
-    tests_require=['nose', 'coveralls'],
+    tests_require=['nose', 'coveralls', 'requests-mock'],
     test_suite='nose.collector',
 
 )

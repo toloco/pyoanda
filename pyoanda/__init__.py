@@ -1,7 +1,7 @@
 from .client import Client
 from .order import Order
 
-__version__ = "0.7"
+__version__ = "0.9"
 
 
 # OANDA API URLS
