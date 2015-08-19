@@ -4,6 +4,7 @@ Usage
 =====
 
 .. code-block:: python
+
     from pyoanda import Client, PRACTICE
 
     c = Client(
@@ -18,9 +19,10 @@ Usage
         granularity="S30"
     )
 
-Note that if you are indenting to use the sandbox environment, you should first use the  API to create an account then use the account_id to run the example above.
+.. Note:: that if you are indenting to use the sandbox environment, you should first use the  API to create an account then use the account_id to run the example above.
 
 .. code-block:: python
+
     from pyoanda import Client, SANDBOX
 
     c = Client(environment=SANDBOX)
