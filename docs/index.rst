@@ -3,6 +3,7 @@ Welcome to pyoanda's documentation!
 
 .. image:: https://travis-ci.org/toloco/pyoanda.svg?branch=master
     :target: https://travis-ci.org/toloco/pyoanda
+.. image:: https://coveralls.io/repos/toloco/pyoanda/badge.svg?branch=master&service=github :target: https://coveralls.io/github/toloco/pyoanda?branch=master
 
 Oanda’s API python wrapper. Robust and Fast API wrapper for your Forex bot.
 

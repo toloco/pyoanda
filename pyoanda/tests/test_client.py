@@ -1,20 +1,19 @@
+import json
+import requests
+import requests_mock
+
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
-
 try:
     from unittest import mock
 except ImportError:
     import mock
-
-import requests
-from requests.exceptions import RequestException
-import requests_mock
-import json
 from decimal import Decimal
 from zipfile import ZipFile
 from io import BytesIO
+from requests.exceptions import RequestException
 
 from ..client import Client
 from ..order import Order
