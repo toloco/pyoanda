@@ -1,5 +1,9 @@
+import json
 import requests
 
+from io import BytesIO
+from time import sleep, time
+from zipfile import ZipFile, BadZipfile
 from logging import getLogger
 from requests.exceptions import RequestException
 try:
@@ -48,16 +52,8 @@ class Client(object):
         except AssertionError:
             return False
 
-    def __session_stablisher(self):
-        if not hasattr(self, "session") or not self.session:
-            self.session = requests.Session()
-            if self.access_token:
-                self.session.headers.update(
-                    {'Authorization': 'Bearer {}'.format(self.access_token)}
-                )
-
-    def __call_raw(self, uri, params=None, method="get", stream=False):
-        """ Makes a raw call to the API with minimal processing.
+    def __get_response(self, uri, params=None, method="get", stream=False):
+        """Creates a response object with the given params and option
 
             Parameters
             ----------
@@ -74,27 +70,32 @@ class Client(object):
 
             Returns a requests.Response object.
         """
-        self._Client__session_stablisher()
+        if not hasattr(self, "session") or not self.session:
+            self.session = requests.Session()
+            if self.access_token:
+                self.session.headers.update(
+                    {'Authorization': 'Bearer {}'.format(self.access_token)}
+                )
+
         # Remove empty params
         if params:
             params = {k: v for k, v in params.items() if v is not None}
+
         kwargs = {
             "url": uri,
             "verify": True,
             "stream": stream
         }
-        if method == "get":
-            kwargs["params"] = params
-        else:
-            kwargs["data"] = params
-            
+
+        kwargs["params" if method == "get" else "data"] = params
+
         return getattr(self.session, method)(**kwargs)
 
     def __call(self, uri, params=None, method="get"):
         """Only returns the response, nor the status_code
         """
         try:
-            resp = self.__call_raw(uri, params, method, False)
+            resp = self.__get_response(uri, params, method, False)
             rjson = resp.json(**self.json_options)
             assert resp.ok
         except AssertionError:
@@ -111,7 +112,7 @@ class Client(object):
         """Returns an stream response
         """
         try:
-            resp = self.__call_raw(uri, params, method, True)
+            resp = self.__get_response(uri, params, method, True)
             assert resp.ok
         except AssertionError:
             raise BadRequest(resp.status_code)
@@ -146,19 +147,14 @@ class Client(object):
             self.API_VERSION
         )
         params = {"accountId": self.account_id, "instruments": instruments}
+
+        call = {"uri": url, "params": params, "method": "get"}
+
         try:
             if stream:
-                return self._Client__call_stream(
-                    uri=url,
-                    params=params,
-                    method="get"
-                )
+                return self._Client__call_stream(**call)
             else:
-                return self._Client__call(
-                    uri=url,
-                    params=params,
-                    method="get"
-                )
+                return self._Client__call(**call)
         except RequestException:
             return False
         except AssertionError:
@@ -223,10 +219,7 @@ class Client(object):
             order_id
         )
         try:
-            return self._Client__call(
-                uri=url,
-                method="get"
-            )
+            return self._Client__call(uri=url, method="get")
         except RequestException:
             return False
         except AssertionError:
@@ -321,10 +314,10 @@ class Client(object):
             self.account_id
         )
         params = {
-            "maxId": int(max_id) if max_id is not None and max_id > 0 else None,
-            "count": int(count) if count is not None and count > 0 else None,
+            "maxId": int(max_id) if max_id and max_id > 0 else None,
+            "count": int(count) if count and count > 0 else None,
             "instrument": instrument,
-            "ids": ','.join([str(x) for x in ids]) if ids else None
+            "ids": ','.join(ids) if ids else None
         }
 
         try:
@@ -336,7 +329,7 @@ class Client(object):
 
     def get_trade(self, trade_id):
         """ Get information on a specific trade.
-            
+
             Parameters
             ----------
             trade_id : int
@@ -381,7 +374,7 @@ class Client(object):
                 Take Profit value.
             trailing_stop : number
                 Trailing Stop distance in pips, up to one decimal place
-            
+
             See more:
             http://developer.oanda.com/rest-live/trades/#modifyExistingTrade
         """
@@ -448,7 +441,7 @@ class Client(object):
 
     def get_position(self, instrument):
         """ Get the position for an instrument.
-            
+
             Parameters
             ----------
             instrument : string
@@ -494,7 +487,13 @@ class Client(object):
         except AssertionError:
             return False
 
-    def get_transactions(self, max_id=None, count=None, instrument=None, ids=None):
+    def get_transactions(
+        self,
+        max_id=None,
+        count=None,
+        instrument=None,
+        ids=None
+    ):
         """ Get a list of transactions.
 
             Parameters
@@ -523,10 +522,10 @@ class Client(object):
             self.account_id
         )
         params = {
-            "maxId": int(max_id) if max_id is not None and max_id > 0 else None,
-            "count": int(count) if count is not None and count > 0 else None,
+            "maxId": int(max_id) if max_id and max_id > 0 else None,
+            "count": int(count) if count and count > 0 else None,
             "instrument": instrument,
-            "ids": ','.join([str(x) for x in ids]) if ids else None
+            "ids": ','.join(ids) if ids else None
         }
 
         try:
@@ -536,10 +535,9 @@ class Client(object):
         except AssertionError:
             return False
 
-
     def get_transaction(self, transaction_id):
         """ Get information on a specific transaction.
-            
+
             Parameters
             ----------
             transaction_id : int
@@ -582,12 +580,67 @@ class Client(object):
             self.account_id
         )
         try:
-            resp = self.__call_raw(url)
+            resp = self.__get_response(url)
             return resp.headers['location']
         except RequestException:
             return False
         except AssertionError:
             return False
+
+    def get_transaction_history(self, max_wait=5.0):
+        """ Download full account history.
+
+            Uses request_transaction_history to get the transaction
+            history URL, then polls the given URL until it's ready (or
+            the max_wait time is reached) and provides the decoded
+            response.
+
+            Parameters
+            ----------
+            max_wait : float
+                The total maximum time to spend waiting for the file to
+                be ready; if this is exceeded a failed response will be
+                returned.  This is not guaranteed to be strictly
+                followed, as one last attempt will be made to check the
+                file before giving up.
+
+            See more:
+            http://developer.oanda.com/rest-live/transaction-history/#getFullAccountHistory
+            http://developer.oanda.com/rest-live/transaction-history/#transactionTypes
+        """
+        url = self.request_transaction_history()
+        if not url:
+            return False
+
+        ready = False
+        start = time()
+        delay = 0.1
+        while not ready and delay:
+            response = requests.head(url)
+            ready = response.ok
+            if not ready:
+                sleep(delay)
+                time_remaining = max_wait - time() + start
+                max_delay = max(0., time_remaining - .1)
+                delay = min(delay * 2, max_delay)
+
+        if not ready:
+            return False
+
+        response = requests.get(url)
+        try:
+            with ZipFile(BytesIO(response.content)) as container:
+                files = container.namelist()
+                if not files:
+                    log.error('Transaction ZIP has no files.')
+                    return False
+                history = container.open(files[0])
+                raw = history.read().decode('ascii')
+        except BadZipfile:
+            log.error('Response is not a valid ZIP file', exc_info=True)
+            return False
+
+        return json.loads(raw, **self.json_options)
 
     def create_account(self, currency=None):
         """ Create a new account.

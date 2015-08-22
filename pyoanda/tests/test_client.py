@@ -1,18 +1,19 @@
+import json
+import requests
+import requests_mock
+
 try:
     import unittest2 as unittest
 except ImportError:
     import unittest
-
 try:
     from unittest import mock
 except ImportError:
     import mock
-
-import requests
-from requests.exceptions import RequestException
-import requests_mock
-import json
 from decimal import Decimal
+from zipfile import ZipFile
+from io import BytesIO
+from requests.exceptions import RequestException
 
 from ..client import Client
 from ..order import Order
@@ -132,15 +133,6 @@ class TestClientFundation(unittest.TestCase):
             except BadRequest:
                 caught += 1
         self.assertEquals(len(status_codes), caught)
-
-    def test_session_stablisher(self):
-        with mock.patch.object(Client, 'get_credentials', return_value=True):
-            c = Client(
-                ("http://mydomain.com", "http://mystreamingdomain.com"),
-                "my_account",
-                "my_token"
-            )
-            c._Client__session_stablisher()
 
     @requests_mock.Mocker()
     def test_custom_json_options(self, m):
@@ -284,6 +276,7 @@ class TestPositionAPI(unittest.TestCase):
             assert self.client.close_position('AUD_USD')
             assert self.client.close_position(instrument='AUD_USD')
 
+
 class TestTradeAPI(unittest.TestCase):
     def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -317,6 +310,10 @@ class TestTradeAPI(unittest.TestCase):
             assert self.client.close_trade(1)
             assert self.client.close_trade(trade_id=1)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> develop
 class TestTransactionAPI(unittest.TestCase):
     def setUp(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -339,3 +336,93 @@ class TestTransactionAPI(unittest.TestCase):
         location = 'http://example.com/transactions.json.gz'
         m.get(requests_mock.ANY, headers={'Location': location}, status_code=202)
         self.assertEqual(location, self.client.request_transaction_history())
+<<<<<<< HEAD
+=======
+
+    @requests_mock.Mocker()
+    def test_get_transaction_history(self, m):
+        # Mock zip file content
+        content = BytesIO()
+        with ZipFile(content, 'w') as zip:
+            zip.writestr('transactions.json', json.dumps({'ok': True}))
+        content.seek(0)
+
+        # Mock requests, one HEAD to check if it's there, one GET once it is
+        location = 'http://example.com/transactions.json.gz'
+        m.head(location, status_code=200)
+        m.get(location, body=content, status_code=200)
+
+        method = 'request_transaction_history'
+        with mock.patch.object(Client, method, return_value=location):
+            transactions = self.client.get_transaction_history()
+            assert transactions['ok']
+            assert m.call_count == 2
+
+    @requests_mock.Mocker()
+    def test_get_transaction_history_slow(self, m):
+        """Ensures that get_transaction_history retries requests."""
+        # Mock zip file content
+        content = BytesIO()
+        with ZipFile(content, 'w') as zip:
+            zip.writestr('transactions.json', json.dumps({'ok': True}))
+        content.seek(0)
+
+        # Mock requests, one HEAD to check if it's there, one GET once it is
+        location = 'http://example.com/transactions.json.gz'
+        m.head(location, [{'status_code': 404}, {'status_code': 200}])
+        m.get(location, body=content, status_code=200)
+
+        method = 'request_transaction_history'
+        with mock.patch.object(Client, method, return_value=location):
+            transactions = self.client.get_transaction_history()
+            assert transactions['ok']
+            assert m.call_count == 3
+
+    @requests_mock.Mocker()
+    def test_get_transaction_history_gives_up(self, m):
+        """Ensures that get_transaction_history eventually gives up."""
+        # Mock requests, one HEAD to check if it's there, one GET once it is
+        location = 'http://example.com/transactions.json.gz'
+        m.head(location, [{'status_code': 404}, {'status_code': 404}])
+
+        method = 'request_transaction_history'
+        with mock.patch.object(Client, method, return_value=location):
+            transactions = self.client.get_transaction_history(.3)
+            assert not transactions
+            # Possible timing issue, may be one or the other
+            assert m.call_count == 2 or m.call_count == 3
+
+    @requests_mock.Mocker()
+    def test_get_transaction_history_handles_bad_files(self, m):
+        """Ensures that get_transaction_history gracefully handles bad files.
+        """
+        # Mock requests, one HEAD to check if it's there, one GET once it is
+        location = 'http://example.com/transactions.json.gz'
+        m.head(location, status_code=200)
+        m.get(location, text='invalid', status_code=200)
+
+        method = 'request_transaction_history'
+        with mock.patch.object(Client, method, return_value=location):
+            transactions = self.client.get_transaction_history()
+            assert not transactions
+
+    @requests_mock.Mocker()
+    def test_get_transaction_history_slow(self, m):
+        """Ensures that get_transaction_history handles empty files."""
+        # Mock zip file content
+        content = BytesIO()
+        with ZipFile(content, 'w') as zip:
+            pass
+        content.seek(0)
+
+        # Mock requests, one HEAD to check if it's there, one GET once it is
+        location = 'http://example.com/transactions.json.gz'
+        m.head(location, [{'status_code': 404}, {'status_code': 200}])
+        m.get(location, body=content, status_code=200)
+
+        method = 'request_transaction_history'
+        with mock.patch.object(Client, method, return_value=location):
+            transactions = self.client.get_transaction_history()
+            assert not transactions
+
+>>>>>>> develop
