@@ -37,7 +37,9 @@ class TestClientFundation(unittest.TestCase):
                     "my_token"
                 )
 
-    def test_call_pass(self):
+    @requests_mock.Mocker()
+    def test_call_pass(self, m):
+        """Ensure that successful HTTP response codes pass."""
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             c = Client(
                 ("http://mydomain.com", "http://mystreamingdomain.com"),
@@ -45,16 +47,19 @@ class TestClientFundation(unittest.TestCase):
                 "my_token"
             )
             c.session = requests.Session()
-        obj = mock
-        setattr(obj, "json", lambda: 1)
-        setattr(obj, "ok", True)
-        with mock.patch.object(c.session, 'get', return_value=obj):
-            c._Client__call(uri="test", params={"test": "test"}, method="get")
 
-        with mock.patch.object(c.session, 'post', return_value=obj):
-            c._Client__call(uri="test", params={"test": "test"}, method="post")
+        for status_code in [200, 201, 202, 301, 302]:
+            m.get(requests_mock.ANY, text='{}', status_code=status_code)
+            c._Client__call(uri="http://example.com", params={"test": "test"},
+                    method="get")
 
-    def test_call_fail(self):
+            m.post(requests_mock.ANY, text='{}', status_code=status_code)
+            c._Client__call(uri="http://example.com", params={"test": "test"},
+                    method="post")
+
+    @requests_mock.Mocker()
+    def test_call_fail(self, m):
+        """Ensure that failure HTTP response codes fail."""
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             c = Client(
                 ("http://mydomain.com", "http://mystreamingdomain.com"),
@@ -62,15 +67,23 @@ class TestClientFundation(unittest.TestCase):
                 "my_token"
             )
             c.session = requests.Session()
-        obj = mock
-        setattr(obj, "json", lambda: {"message": "Bad request"})
-        setattr(obj, "status_code", 400)
-        setattr(obj, "ok", False)
-        with mock.patch.object(c.session, 'get', return_value=obj):
-            with self.assertRaises(BadRequest):
-                c._Client__call(uri="test", params=None, method="get")
 
-    def test_call_stream_pass(self):
+        status_codes = [400, 401, 403, 404, 500]
+        caught = 0
+        for status_code in status_codes:
+            m.get(requests_mock.ANY, text=json.dumps({'message': 'test'}),
+                    status_code=400)
+            try:
+                c._Client__call(uri="http://example.com", params=None,
+                        method="get")
+            except BadRequest:
+                caught += 1
+        self.assertEquals(len(status_codes), caught)
+
+
+    @requests_mock.Mocker()
+    def test_call_stream_pass(self, m):
+        """Ensure that successful HTTP streaming response codes pass."""
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             c = Client(
                 ("http://mydomain.com", "http://mystreamingdomain.com"),
@@ -78,24 +91,25 @@ class TestClientFundation(unittest.TestCase):
                 "my_token"
             )
             c.session = requests.Session()
-        obj = mock
-        setattr(obj, "json", lambda: 1)
-        setattr(obj, "ok", True)
-        with mock.patch.object(c.session, 'get', return_value=obj):
+
+        for status_code in [200, 201, 202, 301, 302]:
+            m.get(requests_mock.ANY, status_code=status_code)
             c._Client__call_stream(
-                uri="test",
+                uri="http://example.com",
                 params={"test": "test"},
                 method="get"
             )
 
-        with mock.patch.object(c.session, 'post', return_value=obj):
+            m.post(requests_mock.ANY, status_code=status_code)
             c._Client__call_stream(
-                uri="test",
+                uri="http://example.com",
                 params={"test": "test"},
                 method="post"
             )
 
-    def test_call_stream_fail(self):
+    @requests_mock.Mocker()
+    def test_call_stream_fail(self, m):
+        """Ensure that failure HTTP streaming response codes fail."""
         with mock.patch.object(Client, 'get_credentials', return_value=True):
             c = Client(
                 ("http://mydomain.com", "http://mystreamingdomain.com"),
@@ -103,17 +117,21 @@ class TestClientFundation(unittest.TestCase):
                 "my_token"
             )
             c.session = requests.Session()
-        obj = mock
-        setattr(obj, "json", lambda: {"message": "Bad request"})
-        setattr(obj, "status_code", 400)
-        setattr(obj, "ok", False)
-        with mock.patch.object(c.session, 'get', return_value=obj):
-            with self.assertRaises(BadRequest):
+
+        status_codes = [400, 401, 403, 404, 500]
+        caught = 0
+        for status_code in status_codes:
+            m.get(requests_mock.ANY, text=json.dumps({'message': 'test'}),
+                    status_code=400)
+            try:
                 c._Client__call_stream(
-                    uri="test",
+                    uri="http://example.com",
                     params={"test": "test"},
                     method="get"
                 )
+            except BadRequest:
+                caught += 1
+        self.assertEquals(len(status_codes), caught)
 
     def test_session_stablisher(self):
         with mock.patch.object(Client, 'get_credentials', return_value=True):
@@ -299,3 +317,25 @@ class TestTradeAPI(unittest.TestCase):
             assert self.client.close_trade(1)
             assert self.client.close_trade(trade_id=1)
 
+class TestTransactionAPI(unittest.TestCase):
+    def setUp(self):
+        with mock.patch.object(Client, 'get_credentials', return_value=True):
+            self.client = Client(
+                ("http://mydomain.com", "http://mystreamingdomain.com"),
+                "my_account",
+                "my_token"
+            )
+
+    def test_get_transactions(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.get_transactions()
+
+    def test_get_transaction(self):
+        with mock.patch.object(Client, '_Client__call', return_value=True):
+            assert self.client.get_transaction(1)
+
+    @requests_mock.Mocker()
+    def test_request_transaction_history(self, m):
+        location = 'http://example.com/transactions.json.gz'
+        m.get(requests_mock.ANY, headers={'Location': location}, status_code=202)
+        self.assertEqual(location, self.client.request_transaction_history())
