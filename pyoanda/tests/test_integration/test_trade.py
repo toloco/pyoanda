@@ -24,21 +24,21 @@ class TestTradeAPI(IntegrationTestCase):
 
         for stop_loss in [round(trade['price'] * 0.5, 5), 0]:
             result = self.client.update_trade(trade['id'], stop_loss=stop_loss)
-            self.assertEquals(stop_loss, result['stopLoss'])
+            self.assertEqual(stop_loss, result['stopLoss'])
 
         for take_profit in [round(trade['price'] * 1.5, 5), 0]:
             result = self.client.update_trade(
                 trade['id'],
                 take_profit=take_profit
             )
-            self.assertEquals(take_profit, result['takeProfit'])
+            self.assertEqual(take_profit, result['takeProfit'])
 
         for trailing_stop in [100, 0]:
             result = self.client.update_trade(
                 trade['id'],
                 trailing_stop=trailing_stop
             )
-            self.assertEquals(trailing_stop, result['trailingStop'])
+            self.assertEqual(trailing_stop, result['trailingStop'])
 
     @unittest.skip("Failing due to Oanda bug, HTTP 500 on close")
     def test_close_trade(self):

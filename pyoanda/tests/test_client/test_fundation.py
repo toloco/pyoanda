@@ -87,7 +87,7 @@ class TestClientFundation(unittest.TestCase):
                 )
             except BadRequest:
                 caught += 1
-        self.assertEquals(len(status_codes), caught)
+        self.assertEqual(len(status_codes), caught)
 
     @requests_mock.Mocker()
     def test_call_stream_pass(self, m):
@@ -142,7 +142,7 @@ class TestClientFundation(unittest.TestCase):
                 )
             except BadRequest:
                 caught += 1
-        self.assertEquals(len(status_codes), caught)
+        self.assertEqual(len(status_codes), caught)
 
     @requests_mock.Mocker()
     def test_custom_json_options(self, m):

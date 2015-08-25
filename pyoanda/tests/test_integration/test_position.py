@@ -5,7 +5,6 @@ except ImportError:
 
 from pyoanda.exceptions import BadRequest
 
-
 from .integration_test_case import IntegrationTestCase
 
 
