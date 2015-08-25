@@ -491,7 +491,7 @@ class Client(object):
         self,
         max_id=None,
         count=None,
-        instrument=None,
+        instrument="all",
         ids=None
     ):
         """ Get a list of transactions.

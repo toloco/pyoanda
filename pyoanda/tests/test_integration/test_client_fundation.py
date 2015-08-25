@@ -12,4 +12,4 @@ class TestClientFoundation(IntegrationTestCase):
 
     def test_connect_fail(self):
         with self.assertRaises(BadRequest):
-            self.client = Client(SANDBOX, 999999999)
+            Client(SANDBOX, 999999999)
