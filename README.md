@@ -59,19 +59,14 @@ Note that if you are indenting to use the sandbox environment, you should first 
     print "username: %s\naccount_id: %d" % (user['username'], user['accountId'])
 ```
 
+### Examples
+
 Check out the [examples gallery](examples) (Working progress)
 
+Please feel free to send or post new examples! everybody will love to see them.
 
-### Run test
-```shell
-python setup.py test
-
-or
-
-nosetest pyoanda
-
-```
 
 
 See [Pypi](https://pypi.python.org/pypi/pyoanda) project page.
+
 See [Docs](http://pyoanda.readthedocs.org/) project page.
