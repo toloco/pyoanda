@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import csv
 import sys
 import yaml
@@ -40,8 +42,8 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
     writer = csv.DictWriter(f, fieldnames=mapFields.values())
     writer.writeheader()
 
-    print 'Fetching data from server...'
-    print '-'*100
+    print('Fetching data from server...')
+    print('-'*100)
 
     # Save the day to display progression output
     lastPct = 0.
@@ -107,12 +109,12 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
 
             # Catch generic exceptions
             except Exception as e:
-                print 'GrabData suffered an exception:', e
-                print 'GrabData will now terminate!'
-                print '-'*100
+                print('GrabData suffered an exception:', e)
+                print('GrabData will now terminate!')
+                print('-'*100)
                 exit()
 
             # Reset the end time to the last candle retrieved
             end = start
-print
-print '-'*100
+print()
+print('-'*100)
