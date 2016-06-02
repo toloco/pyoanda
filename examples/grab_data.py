@@ -114,5 +114,5 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
 
             # Reset the end time to the last candle retrieved
             end = start
-
+print
 print '-'*100
