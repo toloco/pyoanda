@@ -13,9 +13,8 @@ except ImportError:
 
 from .exceptions import BadCredentials, BadRequest
 
-
-log = getLogger(__name__)
-
+logging.basicConfig(level='CRITICAL')
+log = logging.getLogger(__name__)
 
 class Client(object):
     API_VERSION = "v1"
