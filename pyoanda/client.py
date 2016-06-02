@@ -1,10 +1,10 @@
 import json
+import logging
 import requests
 
 from io import BytesIO
 from time import sleep, time
 from zipfile import ZipFile, BadZipfile
-from logging import getLogger
 from requests.exceptions import RequestException
 try:
     from types import NoneType
