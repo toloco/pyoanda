@@ -3,8 +3,7 @@ from __future__ import print_function
 import csv
 import sys
 import yaml
-from dateutil.parser import parse
-from pyoanda import Client, PRACTICE, TRADE
+from pyoanda import Client, TRADE
 from pyoanda.exceptions import BadRequest
 from datetime import datetime, timedelta
 
