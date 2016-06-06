@@ -32,10 +32,19 @@ GRAN = 'M15'
 INST = 'EUR_JPY'
 start = datetime.now() - timedelta(days=DAYS)
 
-with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
+with open('data/data-set-{}-days.csv'.format(DAYS), 'w') as f:
 
-    # We will map fields of the returned data to a more human readable format. (Remove ""Mids", remove "Complete")
-    mapFields = { 'time': 'time', 'openMid': 'open', 'highMid': 'high', 'lowMid': 'low', 'closeMid': 'close', 'volume': 'volume', 'complete': None }
+    # We will map fields of the returned data to a more human readable format.
+    mapFields = {}
+
+    # Remove ""Mids", remove "Complete"
+    mapFields['time'] = 'time'
+    mapFields['lowMid'] = 'low'
+    mapFields['complete'] = None
+    mapFields['highMid'] = 'high'
+    mapFields['openMid'] = 'open'
+    mapFields['volume'] = 'volume'
+    mapFields['closeMid'] = 'close'
 
     # Create the writer which will output to file
     writer = csv.DictWriter(f, fieldnames=mapFields.values())
@@ -82,7 +91,7 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
                         if key in candle:
 
                             # Does the new key exist? (Delete it if not)
-                            if newKey == None:
+                            if newKey is None:
                                 del candle[key]
 
                             # Change the key name
