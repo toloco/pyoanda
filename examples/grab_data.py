@@ -27,17 +27,17 @@ client = Client(
     access_token=config['ACCOUNT_KEY']
 )
 
-DAYS = 100
+DAYS = 50
 GRAN = 'M15'
-INST = 'EUR_USD'
-end = datetime.now()
+INST = 'EUR_JPY'
+start = datetime.now() - timedelta(days=DAYS)
 
 with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
 
     # We will map fields of the returned data to a more human readable format. (Remove ""Mids", remove "Complete")
     mapFields = { 'time': 'time', 'openMid': 'open', 'highMid': 'high', 'lowMid': 'low', 'closeMid': 'close', 'volume': 'volume', 'complete': None }
 
-    # Create the write which will output to file
+    # Create the writer which will output to file
     writer = csv.DictWriter(f, fieldnames=mapFields.values())
     writer.writeheader()
 
@@ -56,7 +56,7 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
         for _ in range(2):  # 24/12 hours
 
             # Find the start time from which to begin retrieving data
-            start = end - timedelta(hours=12)
+            end = start + timedelta(hours=12)
 
             # Create the dictionary which will be sent to PyOanda
             kwargs = dict(
@@ -96,7 +96,11 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
                 pct = int(float(day) / DAYS * 100.0)
                 # print pct
                 if pct != lastPct:
-                    sys.stdout.write('#')
+                    strToWrite = '#'
+                    if pct - lastPct > 1:
+                        strToWrite *= int(pct-lastPct)
+
+                    sys.stdout.write(strToWrite)
                     sys.stdout.flush()
                 lastPct = pct
 
@@ -114,6 +118,6 @@ with open('data/data-set-{}-days.csv'.format(DAYS),'w') as f:
                 exit()
 
             # Reset the end time to the last candle retrieved
-            end = start
+            start = end
 print()
 print('-'*100)
