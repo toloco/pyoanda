@@ -1,7 +1,12 @@
-from .client import Client
-from .order import Order
-
 __version__ = "1.01"
+
+
+try:
+    from .client import Client
+    from .order import Order
+except ImportError:
+    pass
+
 
 
 # OANDA API URLS
