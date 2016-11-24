@@ -1,15 +1,11 @@
 
-from pyoanda import Client, PRACTICE
+from pyoanda import Client, SANDBOX
 
-client = Client(
-    environment=PRACTICE,
-    account_id="{{ACCOUNT_ID}}",
-    access_token="{{ACCOUNT_TOKEN}}"
-)
+client = Client(environment=SANDBOX)
 
 # Get prices for a list of instruments
 
-pair_list = ('AUD_JPY', 'EUR_JPY', 'GBP_JPY', 'AUD_USD')
+pair_list = ('AUD_CAD', 'AUD_CHF')
 
 dataset = client.get_prices(
     instruments=','.join(pair_list),

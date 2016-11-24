@@ -8,7 +8,6 @@ except ImportError:
     pass
 
 
-
 # OANDA API URLS
 SANDBOX = (
     "http://api-sandbox.oanda.com",

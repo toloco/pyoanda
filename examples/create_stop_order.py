@@ -2,13 +2,9 @@
 """
 import datetime
 
-from pyoanda import Client, PRACTICE, Order
+from pyoanda import Client, SANDBOX, Order
 
-client = Client(
-    environment=PRACTICE,
-    account_id="{{ACCOUNT_ID}}",
-    access_token="{{ACCOUNT_TOKEN}}"
-)
+client = Client(environment=SANDBOX)
 
 test_order = Order(
     instrument="EUR_JPY",
