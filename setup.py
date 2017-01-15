@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
-import pyoanda
 
 here = path.abspath(path.dirname(__file__))
 
@@ -14,7 +13,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # https://packaging.python.org/en/latest/single_source_version.html
-    version=pyoanda.__version__,
+    version="1.022",
     description=long_description,
     long_description=long_description,
     url='https://github.com/toloco/pyoanda',
