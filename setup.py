@@ -5,9 +5,8 @@ import pyoanda
 
 here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the relevant file
-with open(path.join(here, 'DESCRIPTION.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+long_description = "Oanda's API python wrapper. Robust and Fast API wrapper for your Forex bot Python library that wraps Oanda API. Built on top of requests, it's easy to use and makes sense."
+
 
 setup(
     name='PyOanda',
