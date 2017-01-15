@@ -1,10 +1,10 @@
 import json
+import logging
 import requests
 
 from io import BytesIO
 from time import sleep, time
 from zipfile import ZipFile, BadZipfile
-from logging import getLogger
 from requests.exceptions import RequestException
 try:
     from types import NoneType
@@ -13,9 +13,8 @@ except ImportError:
 
 from .exceptions import BadCredentials, BadRequest
 
-
-log = getLogger(__name__)
-
+logging.basicConfig(level='CRITICAL')
+log = logging.getLogger(__name__)
 
 class Client(object):
     API_VERSION = "v1"
